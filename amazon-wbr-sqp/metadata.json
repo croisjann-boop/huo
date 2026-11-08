@@ -1,0 +1,6 @@
+{
+  "name": "Theseus Workshop - amazon-wbr-sqp-analytics-template",
+  "description": "amazon-wbr-sqp-analytics-template by Theseus Workshop: Amazon Business Review (WBR) and Search Query Performance (SQP) analytics SaaS application.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

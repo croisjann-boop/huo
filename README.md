@@ -29,3 +29,9 @@ ACOS = 广告花费 / 广告销售额；TACOS = 广告花费 / 总销售额；RO
 ## GitHub Pages（可选）
 
 在仓库 Settings → Pages，选择从分支部署，分支 main、目录 / (root)，即可由 GitHub 托管。提交源代码不等于已开启 Pages。
+
+
+## 仓库内的其他项目
+
+- [Amazon WBR / SQP 项目](amazon-wbr-sqp/中文开始.md)：Theseus Workshop / HyVoid 的 Apache-2.0 开源项目，包含虚构的两周测试数据、分表 CSV 和中文启动说明。进入该目录后按说明安装、构建和预览。
+- 原来的 Seller Insight 静态看板仍在仓库根目录，从 `index.html` 打开。

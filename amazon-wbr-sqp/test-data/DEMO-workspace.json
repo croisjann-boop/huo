@@ -1,0 +1,863 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2026-11-08T00:00:00.000Z",
+  "config": {
+    "analysisType": "Weekly",
+    "currentPeriod": "2026-W45",
+    "priorPeriod": "2026-W44",
+    "skuMap": [
+      {
+        "sku": "DEMO-CHAIR",
+        "parentAsin": "DEMO-PARENT-OUT",
+        "name": "Demo Camping Chair",
+        "productLine": "Outdoor"
+      },
+      {
+        "sku": "DEMO-CUP",
+        "parentAsin": "DEMO-PARENT-HOME",
+        "name": "Demo Insulated Cup",
+        "productLine": "Home"
+      },
+      {
+        "sku": "DEMO-LAMP",
+        "parentAsin": "DEMO-PARENT-OUT",
+        "name": "Demo Camping Lamp",
+        "productLine": "Outdoor"
+      }
+    ]
+  },
+  "rawSellerCentral": [
+    {
+      "date": "2026-10-26",
+      "sku": "DEMO-CHAIR",
+      "unitsOrdered": 29,
+      "orderedProductSales": 1428.58,
+      "pageViews": 580,
+      "sessions": 348
+    },
+    {
+      "date": "2026-10-27",
+      "sku": "DEMO-CHAIR",
+      "unitsOrdered": 29,
+      "orderedProductSales": 1428.57,
+      "pageViews": 580,
+      "sessions": 348
+    },
+    {
+      "date": "2026-10-28",
+      "sku": "DEMO-CHAIR",
+      "unitsOrdered": 29,
+      "orderedProductSales": 1428.57,
+      "pageViews": 580,
+      "sessions": 348
+    },
+    {
+      "date": "2026-10-29",
+      "sku": "DEMO-CHAIR",
+      "unitsOrdered": 29,
+      "orderedProductSales": 1428.57,
+      "pageViews": 580,
+      "sessions": 348
+    },
+    {
+      "date": "2026-10-30",
+      "sku": "DEMO-CHAIR",
+      "unitsOrdered": 28,
+      "orderedProductSales": 1428.57,
+      "pageViews": 560,
+      "sessions": 336
+    },
+    {
+      "date": "2026-10-31",
+      "sku": "DEMO-CHAIR",
+      "unitsOrdered": 28,
+      "orderedProductSales": 1428.57,
+      "pageViews": 560,
+      "sessions": 336
+    },
+    {
+      "date": "2026-11-01",
+      "sku": "DEMO-CHAIR",
+      "unitsOrdered": 28,
+      "orderedProductSales": 1428.57,
+      "pageViews": 560,
+      "sessions": 336
+    },
+    {
+      "date": "2026-10-26",
+      "sku": "DEMO-CUP",
+      "unitsOrdered": 43,
+      "orderedProductSales": 857.15,
+      "pageViews": 860,
+      "sessions": 516
+    },
+    {
+      "date": "2026-10-27",
+      "sku": "DEMO-CUP",
+      "unitsOrdered": 43,
+      "orderedProductSales": 857.15,
+      "pageViews": 860,
+      "sessions": 516
+    },
+    {
+      "date": "2026-10-28",
+      "sku": "DEMO-CUP",
+      "unitsOrdered": 43,
+      "orderedProductSales": 857.14,
+      "pageViews": 860,
+      "sessions": 516
+    },
+    {
+      "date": "2026-10-29",
+      "sku": "DEMO-CUP",
+      "unitsOrdered": 43,
+      "orderedProductSales": 857.14,
+      "pageViews": 860,
+      "sessions": 516
+    },
+    {
+      "date": "2026-10-30",
+      "sku": "DEMO-CUP",
+      "unitsOrdered": 43,
+      "orderedProductSales": 857.14,
+      "pageViews": 860,
+      "sessions": 516
+    },
+    {
+      "date": "2026-10-31",
+      "sku": "DEMO-CUP",
+      "unitsOrdered": 43,
+      "orderedProductSales": 857.14,
+      "pageViews": 860,
+      "sessions": 516
+    },
+    {
+      "date": "2026-11-01",
+      "sku": "DEMO-CUP",
+      "unitsOrdered": 42,
+      "orderedProductSales": 857.14,
+      "pageViews": 840,
+      "sessions": 504
+    },
+    {
+      "date": "2026-10-26",
+      "sku": "DEMO-LAMP",
+      "unitsOrdered": 15,
+      "orderedProductSales": 571.43,
+      "pageViews": 300,
+      "sessions": 180
+    },
+    {
+      "date": "2026-10-27",
+      "sku": "DEMO-LAMP",
+      "unitsOrdered": 15,
+      "orderedProductSales": 571.43,
+      "pageViews": 300,
+      "sessions": 180
+    },
+    {
+      "date": "2026-10-28",
+      "sku": "DEMO-LAMP",
+      "unitsOrdered": 14,
+      "orderedProductSales": 571.43,
+      "pageViews": 280,
+      "sessions": 168
+    },
+    {
+      "date": "2026-10-29",
+      "sku": "DEMO-LAMP",
+      "unitsOrdered": 14,
+      "orderedProductSales": 571.43,
+      "pageViews": 280,
+      "sessions": 168
+    },
+    {
+      "date": "2026-10-30",
+      "sku": "DEMO-LAMP",
+      "unitsOrdered": 14,
+      "orderedProductSales": 571.43,
+      "pageViews": 280,
+      "sessions": 168
+    },
+    {
+      "date": "2026-10-31",
+      "sku": "DEMO-LAMP",
+      "unitsOrdered": 14,
+      "orderedProductSales": 571.43,
+      "pageViews": 280,
+      "sessions": 168
+    },
+    {
+      "date": "2026-11-01",
+      "sku": "DEMO-LAMP",
+      "unitsOrdered": 14,
+      "orderedProductSales": 571.42,
+      "pageViews": 280,
+      "sessions": 168
+    },
+    {
+      "date": "2026-11-02",
+      "sku": "DEMO-CHAIR",
+      "unitsOrdered": 23,
+      "orderedProductSales": 1142.86,
+      "pageViews": 460,
+      "sessions": 276
+    },
+    {
+      "date": "2026-11-03",
+      "sku": "DEMO-CHAIR",
+      "unitsOrdered": 23,
+      "orderedProductSales": 1142.86,
+      "pageViews": 460,
+      "sessions": 276
+    },
+    {
+      "date": "2026-11-04",
+      "sku": "DEMO-CHAIR",
+      "unitsOrdered": 23,
+      "orderedProductSales": 1142.86,
+      "pageViews": 460,
+      "sessions": 276
+    },
+    {
+      "date": "2026-11-05",
+      "sku": "DEMO-CHAIR",
+      "unitsOrdered": 23,
+      "orderedProductSales": 1142.86,
+      "pageViews": 460,
+      "sessions": 276
+    },
+    {
+      "date": "2026-11-06",
+      "sku": "DEMO-CHAIR",
+      "unitsOrdered": 23,
+      "orderedProductSales": 1142.86,
+      "pageViews": 460,
+      "sessions": 276
+    },
+    {
+      "date": "2026-11-07",
+      "sku": "DEMO-CHAIR",
+      "unitsOrdered": 23,
+      "orderedProductSales": 1142.85,
+      "pageViews": 460,
+      "sessions": 276
+    },
+    {
+      "date": "2026-11-08",
+      "sku": "DEMO-CHAIR",
+      "unitsOrdered": 22,
+      "orderedProductSales": 1142.85,
+      "pageViews": 440,
+      "sessions": 264
+    },
+    {
+      "date": "2026-11-02",
+      "sku": "DEMO-CUP",
+      "unitsOrdered": 65,
+      "orderedProductSales": 1285.72,
+      "pageViews": 1300,
+      "sessions": 780
+    },
+    {
+      "date": "2026-11-03",
+      "sku": "DEMO-CUP",
+      "unitsOrdered": 65,
+      "orderedProductSales": 1285.72,
+      "pageViews": 1300,
+      "sessions": 780
+    },
+    {
+      "date": "2026-11-04",
+      "sku": "DEMO-CUP",
+      "unitsOrdered": 64,
+      "orderedProductSales": 1285.72,
+      "pageViews": 1280,
+      "sessions": 768
+    },
+    {
+      "date": "2026-11-05",
+      "sku": "DEMO-CUP",
+      "unitsOrdered": 64,
+      "orderedProductSales": 1285.71,
+      "pageViews": 1280,
+      "sessions": 768
+    },
+    {
+      "date": "2026-11-06",
+      "sku": "DEMO-CUP",
+      "unitsOrdered": 64,
+      "orderedProductSales": 1285.71,
+      "pageViews": 1280,
+      "sessions": 768
+    },
+    {
+      "date": "2026-11-07",
+      "sku": "DEMO-CUP",
+      "unitsOrdered": 64,
+      "orderedProductSales": 1285.71,
+      "pageViews": 1280,
+      "sessions": 768
+    },
+    {
+      "date": "2026-11-08",
+      "sku": "DEMO-CUP",
+      "unitsOrdered": 64,
+      "orderedProductSales": 1285.71,
+      "pageViews": 1280,
+      "sessions": 768
+    },
+    {
+      "date": "2026-11-02",
+      "sku": "DEMO-LAMP",
+      "unitsOrdered": 11,
+      "orderedProductSales": 428.58,
+      "pageViews": 220,
+      "sessions": 132
+    },
+    {
+      "date": "2026-11-03",
+      "sku": "DEMO-LAMP",
+      "unitsOrdered": 11,
+      "orderedProductSales": 428.57,
+      "pageViews": 220,
+      "sessions": 132
+    },
+    {
+      "date": "2026-11-04",
+      "sku": "DEMO-LAMP",
+      "unitsOrdered": 11,
+      "orderedProductSales": 428.57,
+      "pageViews": 220,
+      "sessions": 132
+    },
+    {
+      "date": "2026-11-05",
+      "sku": "DEMO-LAMP",
+      "unitsOrdered": 11,
+      "orderedProductSales": 428.57,
+      "pageViews": 220,
+      "sessions": 132
+    },
+    {
+      "date": "2026-11-06",
+      "sku": "DEMO-LAMP",
+      "unitsOrdered": 11,
+      "orderedProductSales": 428.57,
+      "pageViews": 220,
+      "sessions": 132
+    },
+    {
+      "date": "2026-11-07",
+      "sku": "DEMO-LAMP",
+      "unitsOrdered": 10,
+      "orderedProductSales": 428.57,
+      "pageViews": 200,
+      "sessions": 120
+    },
+    {
+      "date": "2026-11-08",
+      "sku": "DEMO-LAMP",
+      "unitsOrdered": 10,
+      "orderedProductSales": 428.57,
+      "pageViews": 200,
+      "sessions": 120
+    }
+  ],
+  "rawSellerboard": [
+    {
+      "date": "2026-10-26",
+      "sku": "DEMO-CHAIR",
+      "sales": 1428.58,
+      "units": 29,
+      "ppcSpend": 214.29,
+      "fees": 285.72,
+      "cogs": 642.85,
+      "netProfit": 285.72
+    },
+    {
+      "date": "2026-10-27",
+      "sku": "DEMO-CHAIR",
+      "sales": 1428.57,
+      "units": 29,
+      "ppcSpend": 214.29,
+      "fees": 285.71,
+      "cogs": 642.85,
+      "netProfit": 285.72
+    },
+    {
+      "date": "2026-10-28",
+      "sku": "DEMO-CHAIR",
+      "sales": 1428.57,
+      "units": 29,
+      "ppcSpend": 214.29,
+      "fees": 285.71,
+      "cogs": 642.85,
+      "netProfit": 285.72
+    },
+    {
+      "date": "2026-10-29",
+      "sku": "DEMO-CHAIR",
+      "sales": 1428.57,
+      "units": 29,
+      "ppcSpend": 214.29,
+      "fees": 285.71,
+      "cogs": 642.86,
+      "netProfit": 285.71
+    },
+    {
+      "date": "2026-10-30",
+      "sku": "DEMO-CHAIR",
+      "sales": 1428.57,
+      "units": 28,
+      "ppcSpend": 214.28,
+      "fees": 285.71,
+      "cogs": 642.87,
+      "netProfit": 285.71
+    },
+    {
+      "date": "2026-10-31",
+      "sku": "DEMO-CHAIR",
+      "sales": 1428.57,
+      "units": 28,
+      "ppcSpend": 214.28,
+      "fees": 285.71,
+      "cogs": 642.87,
+      "netProfit": 285.71
+    },
+    {
+      "date": "2026-11-01",
+      "sku": "DEMO-CHAIR",
+      "sales": 1428.57,
+      "units": 28,
+      "ppcSpend": 214.28,
+      "fees": 285.71,
+      "cogs": 642.87,
+      "netProfit": 285.71
+    },
+    {
+      "date": "2026-10-26",
+      "sku": "DEMO-CUP",
+      "sales": 857.15,
+      "units": 43,
+      "ppcSpend": 128.58,
+      "fees": 171.43,
+      "cogs": 385.71,
+      "netProfit": 171.43
+    },
+    {
+      "date": "2026-10-27",
+      "sku": "DEMO-CUP",
+      "sales": 857.15,
+      "units": 43,
+      "ppcSpend": 128.57,
+      "fees": 171.43,
+      "cogs": 385.72,
+      "netProfit": 171.43
+    },
+    {
+      "date": "2026-10-28",
+      "sku": "DEMO-CUP",
+      "sales": 857.14,
+      "units": 43,
+      "ppcSpend": 128.57,
+      "fees": 171.43,
+      "cogs": 385.71,
+      "netProfit": 171.43
+    },
+    {
+      "date": "2026-10-29",
+      "sku": "DEMO-CUP",
+      "sales": 857.14,
+      "units": 43,
+      "ppcSpend": 128.57,
+      "fees": 171.43,
+      "cogs": 385.71,
+      "netProfit": 171.43
+    },
+    {
+      "date": "2026-10-30",
+      "sku": "DEMO-CUP",
+      "sales": 857.14,
+      "units": 43,
+      "ppcSpend": 128.57,
+      "fees": 171.43,
+      "cogs": 385.71,
+      "netProfit": 171.43
+    },
+    {
+      "date": "2026-10-31",
+      "sku": "DEMO-CUP",
+      "sales": 857.14,
+      "units": 43,
+      "ppcSpend": 128.57,
+      "fees": 171.43,
+      "cogs": 385.71,
+      "netProfit": 171.43
+    },
+    {
+      "date": "2026-11-01",
+      "sku": "DEMO-CUP",
+      "sales": 857.14,
+      "units": 42,
+      "ppcSpend": 128.57,
+      "fees": 171.43,
+      "cogs": 385.72,
+      "netProfit": 171.42
+    },
+    {
+      "date": "2026-10-26",
+      "sku": "DEMO-LAMP",
+      "sales": 571.43,
+      "units": 15,
+      "ppcSpend": 85.72,
+      "fees": 114.29,
+      "cogs": 257.13,
+      "netProfit": 114.29
+    },
+    {
+      "date": "2026-10-27",
+      "sku": "DEMO-LAMP",
+      "sales": 571.43,
+      "units": 15,
+      "ppcSpend": 85.72,
+      "fees": 114.29,
+      "cogs": 257.13,
+      "netProfit": 114.29
+    },
+    {
+      "date": "2026-10-28",
+      "sku": "DEMO-LAMP",
+      "sales": 571.43,
+      "units": 14,
+      "ppcSpend": 85.72,
+      "fees": 114.29,
+      "cogs": 257.13,
+      "netProfit": 114.29
+    },
+    {
+      "date": "2026-10-29",
+      "sku": "DEMO-LAMP",
+      "sales": 571.43,
+      "units": 14,
+      "ppcSpend": 85.71,
+      "fees": 114.29,
+      "cogs": 257.14,
+      "netProfit": 114.29
+    },
+    {
+      "date": "2026-10-30",
+      "sku": "DEMO-LAMP",
+      "sales": 571.43,
+      "units": 14,
+      "ppcSpend": 85.71,
+      "fees": 114.29,
+      "cogs": 257.15,
+      "netProfit": 114.28
+    },
+    {
+      "date": "2026-10-31",
+      "sku": "DEMO-LAMP",
+      "sales": 571.43,
+      "units": 14,
+      "ppcSpend": 85.71,
+      "fees": 114.29,
+      "cogs": 257.15,
+      "netProfit": 114.28
+    },
+    {
+      "date": "2026-11-01",
+      "sku": "DEMO-LAMP",
+      "sales": 571.42,
+      "units": 14,
+      "ppcSpend": 85.71,
+      "fees": 114.28,
+      "cogs": 257.15,
+      "netProfit": 114.28
+    },
+    {
+      "date": "2026-11-02",
+      "sku": "DEMO-CHAIR",
+      "sales": 1142.86,
+      "units": 23,
+      "ppcSpend": 257.15,
+      "fees": 228.57,
+      "cogs": 514.28,
+      "netProfit": 142.86
+    },
+    {
+      "date": "2026-11-03",
+      "sku": "DEMO-CHAIR",
+      "sales": 1142.86,
+      "units": 23,
+      "ppcSpend": 257.15,
+      "fees": 228.57,
+      "cogs": 514.28,
+      "netProfit": 142.86
+    },
+    {
+      "date": "2026-11-04",
+      "sku": "DEMO-CHAIR",
+      "sales": 1142.86,
+      "units": 23,
+      "ppcSpend": 257.14,
+      "fees": 228.57,
+      "cogs": 514.29,
+      "netProfit": 142.86
+    },
+    {
+      "date": "2026-11-05",
+      "sku": "DEMO-CHAIR",
+      "sales": 1142.86,
+      "units": 23,
+      "ppcSpend": 257.14,
+      "fees": 228.57,
+      "cogs": 514.29,
+      "netProfit": 142.86
+    },
+    {
+      "date": "2026-11-06",
+      "sku": "DEMO-CHAIR",
+      "sales": 1142.86,
+      "units": 23,
+      "ppcSpend": 257.14,
+      "fees": 228.57,
+      "cogs": 514.29,
+      "netProfit": 142.86
+    },
+    {
+      "date": "2026-11-07",
+      "sku": "DEMO-CHAIR",
+      "sales": 1142.85,
+      "units": 23,
+      "ppcSpend": 257.14,
+      "fees": 228.57,
+      "cogs": 514.29,
+      "netProfit": 142.85
+    },
+    {
+      "date": "2026-11-08",
+      "sku": "DEMO-CHAIR",
+      "sales": 1142.85,
+      "units": 22,
+      "ppcSpend": 257.14,
+      "fees": 228.57,
+      "cogs": 514.29,
+      "netProfit": 142.85
+    },
+    {
+      "date": "2026-11-02",
+      "sku": "DEMO-CUP",
+      "sales": 1285.72,
+      "units": 65,
+      "ppcSpend": 128.58,
+      "fees": 257.14,
+      "cogs": 578.57,
+      "netProfit": 321.43
+    },
+    {
+      "date": "2026-11-03",
+      "sku": "DEMO-CUP",
+      "sales": 1285.72,
+      "units": 65,
+      "ppcSpend": 128.57,
+      "fees": 257.14,
+      "cogs": 578.58,
+      "netProfit": 321.43
+    },
+    {
+      "date": "2026-11-04",
+      "sku": "DEMO-CUP",
+      "sales": 1285.72,
+      "units": 64,
+      "ppcSpend": 128.57,
+      "fees": 257.14,
+      "cogs": 578.58,
+      "netProfit": 321.43
+    },
+    {
+      "date": "2026-11-05",
+      "sku": "DEMO-CUP",
+      "sales": 1285.71,
+      "units": 64,
+      "ppcSpend": 128.57,
+      "fees": 257.14,
+      "cogs": 578.57,
+      "netProfit": 321.43
+    },
+    {
+      "date": "2026-11-06",
+      "sku": "DEMO-CUP",
+      "sales": 1285.71,
+      "units": 64,
+      "ppcSpend": 128.57,
+      "fees": 257.14,
+      "cogs": 578.57,
+      "netProfit": 321.43
+    },
+    {
+      "date": "2026-11-07",
+      "sku": "DEMO-CUP",
+      "sales": 1285.71,
+      "units": 64,
+      "ppcSpend": 128.57,
+      "fees": 257.14,
+      "cogs": 578.57,
+      "netProfit": 321.43
+    },
+    {
+      "date": "2026-11-08",
+      "sku": "DEMO-CUP",
+      "sales": 1285.71,
+      "units": 64,
+      "ppcSpend": 128.57,
+      "fees": 257.14,
+      "cogs": 578.58,
+      "netProfit": 321.42
+    },
+    {
+      "date": "2026-11-02",
+      "sku": "DEMO-LAMP",
+      "sales": 428.58,
+      "units": 11,
+      "ppcSpend": 128.58,
+      "fees": 85.72,
+      "cogs": 192.85,
+      "netProfit": 21.43
+    },
+    {
+      "date": "2026-11-03",
+      "sku": "DEMO-LAMP",
+      "sales": 428.57,
+      "units": 11,
+      "ppcSpend": 128.57,
+      "fees": 85.71,
+      "cogs": 192.86,
+      "netProfit": 21.43
+    },
+    {
+      "date": "2026-11-04",
+      "sku": "DEMO-LAMP",
+      "sales": 428.57,
+      "units": 11,
+      "ppcSpend": 128.57,
+      "fees": 85.71,
+      "cogs": 192.86,
+      "netProfit": 21.43
+    },
+    {
+      "date": "2026-11-05",
+      "sku": "DEMO-LAMP",
+      "sales": 428.57,
+      "units": 11,
+      "ppcSpend": 128.57,
+      "fees": 85.71,
+      "cogs": 192.86,
+      "netProfit": 21.43
+    },
+    {
+      "date": "2026-11-06",
+      "sku": "DEMO-LAMP",
+      "sales": 428.57,
+      "units": 11,
+      "ppcSpend": 128.57,
+      "fees": 85.71,
+      "cogs": 192.86,
+      "netProfit": 21.43
+    },
+    {
+      "date": "2026-11-07",
+      "sku": "DEMO-LAMP",
+      "sales": 428.57,
+      "units": 10,
+      "ppcSpend": 128.57,
+      "fees": 85.71,
+      "cogs": 192.86,
+      "netProfit": 21.43
+    },
+    {
+      "date": "2026-11-08",
+      "sku": "DEMO-LAMP",
+      "sales": 428.57,
+      "units": 10,
+      "ppcSpend": 128.57,
+      "fees": 85.71,
+      "cogs": 192.87,
+      "netProfit": 21.42
+    }
+  ],
+  "rawSQP": [
+    {
+      "period": "2026-W44",
+      "searchQuery": "folding camping chair",
+      "searchVolume": 100000,
+      "brandClicks": 400,
+      "marketClicks": 4500,
+      "brandCtr": 0.04,
+      "marketCtr": 0.04,
+      "brandCvr": 0.12,
+      "marketCvr": 0.1,
+      "purchaseShare": 0.2
+    },
+    {
+      "period": "2026-W44",
+      "searchQuery": "insulated water bottle",
+      "searchVolume": 80000,
+      "brandClicks": 400,
+      "marketClicks": 3600,
+      "brandCtr": 0.05,
+      "marketCtr": 0.04,
+      "brandCvr": 0.12,
+      "marketCvr": 0.1,
+      "purchaseShare": 0.15
+    },
+    {
+      "period": "2026-W44",
+      "searchQuery": "portable camping lantern",
+      "searchVolume": 60000,
+      "brandClicks": 240,
+      "marketClicks": 2700,
+      "brandCtr": 0.04,
+      "marketCtr": 0.04,
+      "brandCvr": 0.1,
+      "marketCvr": 0.1,
+      "purchaseShare": 0.1
+    },
+    {
+      "period": "2026-W45",
+      "searchQuery": "folding camping chair",
+      "searchVolume": 90000,
+      "brandClicks": 225,
+      "marketClicks": 4050,
+      "brandCtr": 0.025,
+      "marketCtr": 0.04,
+      "brandCvr": 0.08,
+      "marketCvr": 0.1,
+      "purchaseShare": 0.12
+    },
+    {
+      "period": "2026-W45",
+      "searchQuery": "insulated water bottle",
+      "searchVolume": 72000,
+      "brandClicks": 396,
+      "marketClicks": 3240,
+      "brandCtr": 0.055,
+      "marketCtr": 0.04,
+      "brandCvr": 0.13,
+      "marketCvr": 0.1,
+      "purchaseShare": 0.18
+    },
+    {
+      "period": "2026-W45",
+      "searchQuery": "portable camping lantern",
+      "searchVolume": 54000,
+      "brandClicks": 135,
+      "marketClicks": 2430,
+      "brandCtr": 0.025,
+      "marketCtr": 0.04,
+      "brandCvr": 0.07,
+      "marketCvr": 0.1,
+      "purchaseShare": 0.06
+    }
+  ]
+}
