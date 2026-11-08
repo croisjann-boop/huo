@@ -1,0 +1,8 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const A=require('./core.js');
+const row={date:'2026-11-01',marketplace:'US',asin:'B0EXAMPLE1',sku:'sku-1',product:'Cup, "large"',sales:200,orders:4,units:5,sessions:20,adSpend:20,adSales:100,impressions:1000,clicks:20};
+test('ratios use weighted totals and zero denominators remain unavailable',()=>{const a=A.aggregate([row,{...row,sales:800,adSpend:80,adSales:200}]);assert.equal(a.acos,100/300);assert.equal(a.tacos,.1);assert.equal(a.roas,3);assert.equal(a.conversion,.2);assert.equal(A.aggregate([]).acos,null);});
+test('CSV round trip handles quotes, comma, BOM, multiline and CRLF',()=>{const r={...row,product:'Cup, "large"\nnew line'};assert.deepEqual(A.importCSV(A.exportCSV([r])),[r]);});
+test('reject malformed CSV without accepting partial data',()=>{assert.throws(()=>A.parseCSV('"unclosed'),/未闭合/);assert.throws(()=>A.parseCSV('"closed"extra'),/多余字符/);assert.throws(()=>A.importCSV('date,sku\n2026-11-01,x'),/缺少字段/);});
+test('reject invalid dates, missing numbers, negatives and unsupported sites',()=>{for(const patch of [{date:'2026-02-30'},{sales:''},{adSpend:-1},{orders:2.2},{marketplace:'CA'},{clicks:1001}])assert.throws(()=>A.importCSV(A.exportCSV([{...row,...patch}])));});
+test('reject duplicate date/marketplace/SKU rather than double counting',()=>{assert.throws(()=>A.importCSV(A.exportCSV([row,row])),/重复/);assert.equal(A.importCSV(A.exportCSV([row,{...row,marketplace:'UK'}])).length,2);});
+test('export neutralizes spreadsheet formulas in text',()=>{const matrix=A.parseCSV(A.exportCSV([{...row,product:'=1+1'}]));assert.equal(matrix[1][4],"'=1+1");});
