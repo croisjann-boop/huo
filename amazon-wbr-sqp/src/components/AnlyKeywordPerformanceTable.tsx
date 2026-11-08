@@ -1,3 +1,4 @@
+// 2026-11-08: 简体中文界面适配；保留原作者 Apache-2.0 许可证。
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -43,13 +44,13 @@ export default function AnlyKeywordPerformanceTable({
       const shareChange = curPurchaseShare - priPurchaseShare;
 
       // AI Diagnostic Rule-Engine
-      let trafficOpportunity = '✅ Outstanding, Keep It Up';
+      let trafficOpportunity = "✅ 表现良好，保持观察";
       if (kw.brandCtr < kw.marketCtr && kw.brandCvr >= kw.marketCvr) {
-        trafficOpportunity = '⚠️ Optimize Main Image/Price (Low CTR)';
+        trafficOpportunity = "⚠️ 点击率偏低，检查主图与价格";
       } else if (kw.brandCtr >= kw.marketCtr && kw.brandCvr < kw.marketCvr) {
-        trafficOpportunity = '⚠️ Optimize Detail Page/Video (Low CVR)';
+        trafficOpportunity = "⚠️ 转化率偏低，检查详情页与视频";
       } else if (kw.brandCtr < kw.marketCtr && kw.brandCvr < kw.marketCvr) {
-        trafficOpportunity = '🚨 Double Deficit, Lower Bid';
+        trafficOpportunity = "🚨 双重不足，评估是否降低出价";
       }
 
       return {
@@ -91,13 +92,13 @@ export default function AnlyKeywordPerformanceTable({
       {/* Header Info Block */}
       <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-[var(--color-primary)]">
         <span className="text-[11px] font-semibold tracking-wider text-[var(--color-muted)] uppercase block mb-1">
-          Engine / Keyword Traffic Auditing
+          分析中心 / 关键词流量诊断
         </span>
         <h2 className="font-serif-heading text-2xl font-bold text-[var(--color-primary)]">
-          Anly_Keyword_Performance Keyword Conversion Diagnostic Engine
+          关键词表现与转化分析
         </h2>
         <p className="text-[12px] text-[var(--color-muted)] mt-1">
-          Scans and maps the <span className="font-semibold text-[var(--color-primary)]">Top 50 Search Queries</span> by market volume in period <span className="font-mono text-slate-800 font-semibold">{currentPeriod}</span>. Isolates traffic conversion gaps against market benchmarks.
+          分析当前周期的 <span className="font-semibold text-[var(--color-primary)]">搜索量前 50 的关键词</span> ，分析周期： <span className="font-mono text-slate-800 font-semibold">{currentPeriod}</span>。对比市场基准，查看流量与转化差距。
         </p>
       </div>
 
@@ -108,17 +109,16 @@ export default function AnlyKeywordPerformanceTable({
             <TrendingDown size={24} className="text-[var(--color-negative)] shrink-0 mt-0.5" />
             <div>
               <h4 className="font-serif-heading text-base font-bold text-[var(--color-primary)]">
-                Critical Market Share Leak: "{worstShareLoss.searchQuery}"
+                重点关注购买份额下降：「{worstShareLoss.searchQuery}」
               </h4>
               <p className="text-[12px] text-[var(--color-body-text)] mt-1 leading-relaxed">
-                Our keyword diagnosis has isolated <span className="font-semibold text-[var(--color-primary)]">"{worstShareLoss.searchQuery}"</span> as having the worst brand purchase share contraction, declining by <span className="font-mono text-[var(--color-negative)] font-bold">{formatPercent(Math.abs(worstShareLoss.shareChange))}</span>. 
-                Action recommendation: {worstShareLoss.trafficOpportunity}.
+                当前关键词分析发现 <span className="font-semibold text-[var(--color-primary)]">"{worstShareLoss.searchQuery}"</span> 的品牌购买份额下降最多，下降 <span className="font-mono text-[var(--color-negative)] font-bold">{formatPercent(Math.abs(worstShareLoss.shareChange))}</span>。规则提示： {worstShareLoss.trafficOpportunity}。
               </p>
             </div>
           </div>
           <div className="text-right shrink-0">
             <span className="text-[11px] font-semibold tracking-wider text-[var(--color-muted)] uppercase block">
-              Market Share Drop
+              购买份额下降
             </span>
             <span className="font-serif-display text-2xl font-black text-[var(--color-negative)]">
               -{formatPercent(Math.abs(worstShareLoss.shareChange))}
@@ -133,22 +133,22 @@ export default function AnlyKeywordPerformanceTable({
           <table className="w-full border-collapse text-left text-[13px]">
             <thead className="bg-[var(--table-header-bg)] text-[var(--color-primary)] border-b-2 border-[var(--table-header-sep)] text-[11px] uppercase tracking-wider font-semibold">
               <tr>
-                <th className="px-4 py-3 font-semibold text-center w-12">No</th>
-                <th className="px-4 py-3 font-semibold">Search Query (Keyword Keyword)</th>
-                <th className="px-4 py-3 text-right font-semibold">Cur Search Vol</th>
-                <th className="px-4 py-3 text-right font-semibold">Pri Search Vol</th>
-                <th className="px-4 py-3 text-right font-semibold">Vol Change %</th>
-                <th className="px-4 py-3 text-right font-semibold">Cur Brand Share</th>
-                <th className="px-4 py-3 text-right font-semibold">Pri Brand Share</th>
-                <th className="px-4 py-3 text-right font-semibold">Share Change</th>
-                <th className="px-4 py-3 font-semibold text-center w-80">Traffic / Listing Diagnostic Recommendation</th>
+                <th className="px-4 py-3 font-semibold text-center w-12">序号</th>
+                <th className="px-4 py-3 font-semibold">搜索词 / 关键词</th>
+                <th className="px-4 py-3 text-right font-semibold">本期搜索量</th>
+                <th className="px-4 py-3 text-right font-semibold">上期搜索量</th>
+                <th className="px-4 py-3 text-right font-semibold">搜索量变化率</th>
+                <th className="px-4 py-3 text-right font-semibold">本期购买份额</th>
+                <th className="px-4 py-3 text-right font-semibold">上期购买份额</th>
+                <th className="px-4 py-3 text-right font-semibold">份额变化</th>
+                <th className="px-4 py-3 font-semibold text-center w-80">流量与商品页面诊断提示</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--color-border)] bg-white font-sans">
               {diagnosedRows.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="px-4 py-12 text-center text-[var(--color-muted)] font-serif-heading italic">
-                    No active Search Query Performance data found. Load raw SQP report to trigger analysis.
+                    暂无搜索词表现数据，请先导入搜索词报表。
                   </td>
                 </tr>
               ) : (
@@ -156,9 +156,9 @@ export default function AnlyKeywordPerformanceTable({
                   const volPct = Math.min((row.curSearchVolume / maxChangeVals.volume) * 100, 100);
                   const shareChgPct = Math.min((Math.abs(row.shareChange) / maxChangeVals.shareChange) * 100, 100);
 
-                  const isDoubleDeficit = row.trafficOpportunity.includes('Double Deficit');
-                  const isLowCtr = row.trafficOpportunity.includes('Low CTR');
-                  const isLowCvr = row.trafficOpportunity.includes('Low CVR');
+                  const isDoubleDeficit = row.trafficOpportunity.includes("双重不足");
+                  const isLowCtr = row.trafficOpportunity.includes("点击率偏低");
+                  const isLowCvr = row.trafficOpportunity.includes("转化率偏低");
 
                   return (
                     <tr
@@ -215,19 +215,19 @@ export default function AnlyKeywordPerformanceTable({
                       <td className="px-4 py-3 text-center">
                         {isDoubleDeficit ? (
                           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-red-100 text-[var(--color-negative)] animate-pulse border border-red-200">
-                            <AlertTriangle size={12} /> Double Deficit, Lower Bid
+                            <AlertTriangle size={12} /> 双重不足，评估是否降低出价
                           </span>
                         ) : isLowCtr ? (
                           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                            <AlertTriangle size={12} /> Low CTR (Optimize Image/Price)
+                            <AlertTriangle size={12} /> 点击率偏低，检查主图与价格
                           </span>
                         ) : isLowCvr ? (
                           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
-                            <AlertTriangle size={12} /> Low CVR (Optimize Detail/Video)
+                            <AlertTriangle size={12} /> 转化率偏低，检查详情页与视频
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-green-50 text-green-700 border border-green-200">
-                            <CheckCircle size={12} /> Healthy, Keep It Up
+                            <CheckCircle size={12} /> 表现良好，保持观察
                           </span>
                         )}
                       </td>
@@ -239,7 +239,7 @@ export default function AnlyKeywordPerformanceTable({
           </table>
         </div>
         <div className="text-[11px] text-[var(--color-muted)] mt-3">
-          Showing diagnostic audits for the Top {diagnosedRows.length} keywords in {currentPeriod}.
+          当前展示前 {diagnosedRows.length} 个关键词的诊断结果，周期： {currentPeriod}.
         </div>
       </div>
     </div>

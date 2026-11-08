@@ -9,20 +9,20 @@
       {
         "sku": "DEMO-CHAIR",
         "parentAsin": "DEMO-PARENT-OUT",
-        "name": "Demo Camping Chair",
-        "productLine": "Outdoor"
+        "name": "演示·户外折叠露营椅",
+        "productLine": "户外用品"
       },
       {
         "sku": "DEMO-CUP",
         "parentAsin": "DEMO-PARENT-HOME",
-        "name": "Demo Insulated Cup",
-        "productLine": "Home"
+        "name": "演示·不锈钢保温杯",
+        "productLine": "居家用品"
       },
       {
         "sku": "DEMO-LAMP",
         "parentAsin": "DEMO-PARENT-OUT",
-        "name": "Demo Camping Lamp",
-        "productLine": "Outdoor"
+        "name": "演示·便携露营灯",
+        "productLine": "户外用品"
       }
     ]
   },

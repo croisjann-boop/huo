@@ -1,3 +1,4 @@
+// 2026-11-08: 简体中文界面适配；保留原作者 Apache-2.0 许可证。
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -62,13 +63,13 @@ export default function FactSalesTable({ data }: FactSalesTableProps) {
       <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-[var(--color-accent)] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <span className="text-[11px] font-semibold tracking-wider text-[var(--color-muted)] uppercase block mb-1">
-            Canonical Fact Layer
+            标准数据层
           </span>
           <h2 className="font-serif-heading text-2xl font-bold text-[var(--color-primary)]">
-            Fact_Sales Standard Sales Wide Table
+            销售标准汇总表
           </h2>
           <p className="text-[12px] text-[var(--color-muted)] mt-1">
-            Standardized ledger automatically merging Seller Central and Sellerboard reports. Sorts and indexes trade days on SKU level.
+            按日期和 SKU 匹配销售报表与利润报表，自动生成经营汇总记录。
           </p>
         </div>
         <div className="relative">
@@ -77,7 +78,7 @@ export default function FactSalesTable({ data }: FactSalesTableProps) {
           </span>
           <input
             type="text"
-            placeholder="Search fact ledger..."
+            placeholder="搜索日期、SKU 或父 ASIN…"
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
             className="pl-8 pr-3 py-1.5 border border-[var(--color-border)] rounded-md text-[13px] bg-white focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] w-60"
@@ -91,22 +92,22 @@ export default function FactSalesTable({ data }: FactSalesTableProps) {
           <table className="w-full border-collapse text-left text-[13px]">
             <thead className="bg-[var(--table-header-bg)] text-[var(--color-primary)] border-b-2 border-[var(--table-header-sep)] text-[11px] uppercase tracking-wider font-semibold">
               <tr>
-                <th className="px-4 py-3 font-semibold text-center w-12">No</th>
-                <th className="px-4 py-3 font-semibold">Date</th>
-                <th className="px-4 py-3 font-semibold">Merchant SKU</th>
-                <th className="px-4 py-3 font-semibold">Parent ASIN</th>
-                <th className="px-4 py-3 font-semibold text-right">Sales Revenue</th>
-                <th className="px-4 py-3 font-semibold text-right">Units</th>
-                <th className="px-4 py-3 font-semibold text-right">PPC Spend</th>
-                <th className="px-4 py-3 font-semibold text-right">Net Profit</th>
-                <th className="px-4 py-3 font-semibold text-center">Period Tag</th>
+                <th className="px-4 py-3 font-semibold text-center w-12">序号</th>
+                <th className="px-4 py-3 font-semibold">日期</th>
+                <th className="px-4 py-3 font-semibold">商家 SKU</th>
+                <th className="px-4 py-3 font-semibold">父 ASIN</th>
+                <th className="px-4 py-3 font-semibold text-right">销售额</th>
+                <th className="px-4 py-3 font-semibold text-right">销售件数</th>
+                <th className="px-4 py-3 font-semibold text-right">广告花费</th>
+                <th className="px-4 py-3 font-semibold text-right">净利润</th>
+                <th className="px-4 py-3 font-semibold text-center">统计周期</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--color-border)] bg-white font-sans">
               {paginatedData.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="px-4 py-12 text-center text-[var(--color-muted)] font-serif-heading italic">
-                    No matching aligned ledger records found. Populate Raw reports to build this table.
+                    暂无匹配的汇总记录，请先导入原始销售或利润报表。
                   </td>
                 </tr>
               ) : (
@@ -118,7 +119,7 @@ export default function FactSalesTable({ data }: FactSalesTableProps) {
                   const profitPct = Math.min((Math.abs(row.netProfit) / maxVals.profit) * 100, 100);
 
                   // Set row highlight if unmapped or negative profit
-                  const isUnmapped = row.parentAsin === '未映射' || row.parentAsin === 'Unmapped';
+                  const isUnmapped = row.parentAsin === '未映射' || row.parentAsin === '未匹配';
                   const isLoss = row.netProfit < 0;
 
                   return (
@@ -213,7 +214,7 @@ export default function FactSalesTable({ data }: FactSalesTableProps) {
             {filteredData.length > 0 && (
               <tfoot className="bg-slate-100 border-t-2 border-[var(--color-border)] text-[12px] font-semibold text-[var(--color-primary)] font-sans">
                 <tr>
-                  <td colSpan={4} className="px-4 py-3 text-center uppercase tracking-wider font-semibold">SUM</td>
+                  <td colSpan={4} className="px-4 py-3 text-center uppercase tracking-wider font-semibold">合计</td>
                   <td className="px-4 py-3 text-right font-mono">{formatCurrency(totals.revenue)}</td>
                   <td className="px-4 py-3 text-right font-mono">{formatInteger(totals.units)}</td>
                   <td className="px-4 py-3 text-right font-mono">{formatCurrency(totals.ppc)}</td>
@@ -231,9 +232,9 @@ export default function FactSalesTable({ data }: FactSalesTableProps) {
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-6 border-t border-[var(--color-border)] pt-4">
             <span className="text-[12px] text-[var(--color-muted)]">
-              Showing <span className="font-semibold text-[var(--color-primary)]">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
-              <span className="font-semibold text-[var(--color-primary)]">{Math.min(currentPage * itemsPerPage, filteredData.length)}</span> of{' '}
-              <span className="font-semibold text-[var(--color-primary)]">{filteredData.length}</span> rows
+              当前显示第 <span className="font-semibold text-[var(--color-primary)]">{(currentPage - 1) * itemsPerPage + 1}</span> 至{' '}
+              <span className="font-semibold text-[var(--color-primary)]">{Math.min(currentPage * itemsPerPage, filteredData.length)}</span> 条，共{' '}
+              <span className="font-semibold text-[var(--color-primary)]">{filteredData.length}</span> 条
             </span>
             <div className="flex items-center gap-1">
               <button

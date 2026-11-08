@@ -1,3 +1,4 @@
+// 2026-11-08: 简体中文界面适配；保留原作者 Apache-2.0 许可证。
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -58,13 +59,13 @@ export default function FactSQPTable({ data }: FactSQPTableProps) {
       <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-[var(--color-accent)] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <span className="text-[11px] font-semibold tracking-wider text-[var(--color-muted)] uppercase block mb-1">
-            Standard Fact Layer
+            标准数据层
           </span>
           <h2 className="font-serif-heading text-2xl font-bold text-[var(--color-primary)]">
-            Fact_SQP Search Query standardized facts
+            搜索词标准汇总表
           </h2>
           <p className="text-[12px] text-[var(--color-muted)] mt-1">
-            Standardized SQP report. Evaluates individual keywords, calculating Brand vs. Market CTR &amp; CVR gap indexes.
+            标准化搜索词报表，比较品牌与市场的点击率、转化率及购买份额。
           </p>
         </div>
         <div className="relative">
@@ -73,7 +74,7 @@ export default function FactSQPTable({ data }: FactSQPTableProps) {
           </span>
           <input
             type="text"
-            placeholder="Search keywords..."
+            placeholder="搜索关键词或统计周期…"
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
             className="pl-8 pr-3 py-1.5 border border-[var(--color-border)] rounded-md text-[13px] bg-white focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] w-60"
@@ -85,10 +86,9 @@ export default function FactSQPTable({ data }: FactSQPTableProps) {
       <div className="bg-[var(--insight-bg)] p-4 rounded-xl border-l-4 border-[var(--color-accent)] flex items-start gap-3">
         <HelpCircle size={18} className="text-[var(--color-accent)] shrink-0 mt-0.5" />
         <div className="text-[12px] text-[var(--color-body-text)]">
-          <p className="font-bold font-serif-heading text-sm text-[var(--color-primary)] mb-1">Understanding CTR Gap (Brand vs. Market Appeal)</p>
+          <p className="font-bold font-serif-heading text-sm text-[var(--color-primary)] mb-1">了解点击率差值（品牌与市场对比）</p>
           <p className="leading-relaxed">
-            CTR Gap is calculated as <span className="font-mono">Brand_CTR - Market_CTR</span>. A positive gap indicates superior listing appeal (main images, pricing, star ratings).
-            A severe negative CTR Gap (e.g., <span className="font-semibold text-[var(--color-negative)]">&lt; -1.50%</span>) triggers an anomaly warning, signalling listing traffic leaks.
+            点击率差值 = <span className="font-mono">品牌点击率 − 市场点击率</span>。正值表示品牌点击率高于市场基准；当差值较低（例如 <span className="font-semibold text-[var(--color-negative)]">低于 −1.50 个百分点</span>）时触发规则提醒，可进一步核查主图、价格等因素。
           </p>
         </div>
       </div>
@@ -99,25 +99,25 @@ export default function FactSQPTable({ data }: FactSQPTableProps) {
           <table className="w-full border-collapse text-left text-[13px]">
             <thead className="bg-[var(--table-header-bg)] text-[var(--color-primary)] border-b-2 border-[var(--table-header-sep)] text-[11px] uppercase tracking-wider font-semibold">
               <tr>
-                <th className="px-4 py-3 font-semibold text-center w-12">No</th>
-                <th className="px-4 py-3 font-semibold">Period</th>
-                <th className="px-4 py-3 font-semibold">Search Query (Keyword)</th>
-                <th className="px-4 py-3 font-semibold text-right">Search Volume</th>
-                <th className="px-4 py-3 font-semibold text-right">Brand Clicks</th>
-                <th className="px-4 py-3 font-semibold text-right">Market Clicks</th>
-                <th className="px-4 py-3 font-semibold text-right">Brand CTR</th>
-                <th className="px-4 py-3 font-semibold text-right">Market CTR</th>
-                <th className="px-4 py-3 font-semibold text-right">Brand CVR</th>
-                <th className="px-4 py-3 font-semibold text-right">Market CVR</th>
-                <th className="px-4 py-3 font-semibold text-right">Purchase Share</th>
-                <th className="px-4 py-3 font-semibold text-right">CTR Gap</th>
+                <th className="px-4 py-3 font-semibold text-center w-12">序号</th>
+                <th className="px-4 py-3 font-semibold">周期</th>
+                <th className="px-4 py-3 font-semibold">搜索词 / 关键词</th>
+                <th className="px-4 py-3 font-semibold text-right">搜索量</th>
+                <th className="px-4 py-3 font-semibold text-right">品牌点击量</th>
+                <th className="px-4 py-3 font-semibold text-right">市场点击量</th>
+                <th className="px-4 py-3 font-semibold text-right">品牌点击率</th>
+                <th className="px-4 py-3 font-semibold text-right">市场点击率</th>
+                <th className="px-4 py-3 font-semibold text-right">品牌转化率</th>
+                <th className="px-4 py-3 font-semibold text-right">市场转化率</th>
+                <th className="px-4 py-3 font-semibold text-right">购买份额</th>
+                <th className="px-4 py-3 font-semibold text-right">点击率差值</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--color-border)] bg-white font-sans">
               {paginatedData.length === 0 ? (
                 <tr>
                   <td colSpan={12} className="px-4 py-12 text-center text-[var(--color-muted)] font-serif-heading italic">
-                    No matching standardized SQP records found. Ensure raw SQP reports are populated.
+                    暂无匹配的搜索词汇总记录，请检查原始搜索词数据。
                   </td>
                 </tr>
               ) : (
@@ -205,7 +205,7 @@ export default function FactSQPTable({ data }: FactSQPTableProps) {
                         {row.ctrGap > 0 ? '+' : ''}{formatPercent(row.ctrGap)}
                         {isAnomaly && (
                           <span className="ml-1 text-[10px] bg-red-100 text-[var(--color-negative)] px-1 rounded-full align-middle font-bold uppercase tracking-wider">
-                            Anomaly
+                            异常提醒
                           </span>
                         )}
                       </td>
@@ -218,7 +218,7 @@ export default function FactSQPTable({ data }: FactSQPTableProps) {
             {filteredData.length > 0 && (
               <tfoot className="bg-slate-100 border-t-2 border-[var(--color-border)] text-[12px] font-semibold text-[var(--color-primary)] font-sans">
                 <tr>
-                  <td colSpan={3} className="px-4 py-3 text-center uppercase tracking-wider font-semibold">SUM</td>
+                  <td colSpan={3} className="px-4 py-3 text-center uppercase tracking-wider font-semibold">合计</td>
                   <td className="px-4 py-3 text-right font-mono">{formatInteger(totals.volume)}</td>
                   <td className="px-4 py-3 text-right font-mono">{formatInteger(totals.brandClicks)}</td>
                   <td className="px-4 py-3 text-right font-mono">{formatInteger(totals.marketClicks)}</td>
@@ -233,9 +233,9 @@ export default function FactSQPTable({ data }: FactSQPTableProps) {
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-6 border-t border-[var(--color-border)] pt-4">
             <span className="text-[12px] text-[var(--color-muted)]">
-              Showing <span className="font-semibold text-[var(--color-primary)]">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
-              <span className="font-semibold text-[var(--color-primary)]">{Math.min(currentPage * itemsPerPage, filteredData.length)}</span> of{' '}
-              <span className="font-semibold text-[var(--color-primary)]">{filteredData.length}</span> rows
+              当前显示第 <span className="font-semibold text-[var(--color-primary)]">{(currentPage - 1) * itemsPerPage + 1}</span> 至{' '}
+              <span className="font-semibold text-[var(--color-primary)]">{Math.min(currentPage * itemsPerPage, filteredData.length)}</span> 条，共{' '}
+              <span className="font-semibold text-[var(--color-primary)]">{filteredData.length}</span> 条
             </span>
             <div className="flex items-center gap-1">
               <button

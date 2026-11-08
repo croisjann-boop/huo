@@ -1,3 +1,4 @@
+// 2026-11-08: 简体中文界面适配；保留原作者 Apache-2.0 许可证。
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -34,8 +35,8 @@ export default function AnlySKUPerformanceTable({
     // Calculate metrics
     let rows: AnlySKUPerformanceRow[] = currentPeriodSKUs.map(sku => {
       const mapInfo = skuMap.find(m => m.sku === sku);
-      const parentAsin = mapInfo?.parentAsin || 'Unmapped';
-      const productName = mapInfo?.name || 'Unmapped SKU';
+      const parentAsin = mapInfo?.parentAsin || '未匹配';
+      const productName = mapInfo?.name || "未匹配商品";
 
       // Current values
       const curSalesRows = factSales.filter(r => r.sku === sku && r.periodTag === currentPeriod);
@@ -110,13 +111,13 @@ export default function AnlySKUPerformanceTable({
       {/* Header Info Block */}
       <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-[var(--color-primary)]">
         <span className="text-[11px] font-semibold tracking-wider text-[var(--color-muted)] uppercase block mb-1">
-          Engine / SKU Change Diagnosis
+          分析中心 / 商品变化诊断
         </span>
         <h2 className="font-serif-heading text-2xl font-bold text-[var(--color-primary)]">
-          Anly_SKU_Performance SKU Performance Diagnostic Engine
+          商品表现与利润变化分析
         </h2>
         <p className="text-[12px] text-[var(--color-muted)] mt-1">
-          Compares metrics for current target period <span className="font-mono text-slate-800 font-semibold">{currentPeriod}</span> against comparison period <span className="font-mono text-slate-800 font-semibold">{priorPeriod}</span>. Isolate the key products causing profit leaks.
+          对比当前周期 <span className="font-mono text-slate-800 font-semibold">{currentPeriod}</span> 与上一周期 <span className="font-mono text-slate-800 font-semibold">{priorPeriod}</span>，定位影响利润变化的重点商品。
         </p>
       </div>
 
@@ -127,20 +128,19 @@ export default function AnlySKUPerformanceTable({
             <TrendingDown size={24} className="text-[var(--color-negative)] shrink-0 mt-0.5" />
             <div>
               <h4 className="font-serif-heading text-base font-bold text-[var(--color-primary)]">
-                Critical Profit Erosion Alert: SKU {biggestProfitLoser.sku}
+                重点关注利润下降商品： {biggestProfitLoser.sku}
               </h4>
               <p className="text-[12px] text-[var(--color-body-text)] mt-1 leading-relaxed">
-                Our diagnosis has isolated <span className="font-mono font-bold text-[var(--color-primary)]">{biggestProfitLoser.sku}</span> ({biggestProfitLoser.productName}) as the biggest single profit leak. 
-                Its net profit shrunk by <span className="font-mono text-[var(--color-negative)] font-bold">{formatCurrency(Math.abs(biggestProfitLoser.profitChange))}</span> this period. Check for elevated PPC spend, sudden Amazon fee spikes, or steep discounting.
+                当前分析发现 <span className="font-mono font-bold text-[var(--color-primary)]">{biggestProfitLoser.sku}</span>（{biggestProfitLoser.productName}）的利润下降最多，本期净利润减少 <span className="font-mono text-[var(--color-negative)] font-bold">{formatCurrency(Math.abs(biggestProfitLoser.profitChange))}</span> 。请核查广告花费、平台费用和折扣变化。
               </p>
             </div>
           </div>
           <div className="text-right shrink-0">
             <span className="text-[11px] font-semibold tracking-wider text-[var(--color-muted)] uppercase block">
-              Erosion Ranking
+              利润下降排名
             </span>
             <span className="font-serif-display text-2xl font-black text-[var(--color-negative)]">
-              Rank #1 Leak
+              利润下降第 1 名
             </span>
           </div>
         </div>
@@ -152,25 +152,25 @@ export default function AnlySKUPerformanceTable({
           <table className="w-full border-collapse text-left text-[13px]">
             <thead className="bg-[var(--table-header-bg)] text-[var(--color-primary)] border-b-2 border-[var(--table-header-sep)] text-[11px] uppercase tracking-wider font-semibold">
               <tr>
-                <th className="px-4 py-3 font-semibold text-center w-12">No</th>
-                <th className="px-4 py-3 font-semibold">Merchant SKU</th>
-                <th className="px-4 py-3 font-semibold">Parent ASIN</th>
-                <th className="px-4 py-3 font-semibold">Product Name Label</th>
-                <th className="px-4 py-3 font-semibold text-right">Cur Revenue</th>
-                <th className="px-4 py-3 font-semibold text-right">Pri Revenue</th>
-                <th className="px-4 py-3 font-semibold text-right">Rev Change</th>
-                <th className="px-4 py-3 font-semibold text-right">YoY/WoW %</th>
-                <th className="px-4 py-3 font-semibold text-right">Cur Profit</th>
-                <th className="px-4 py-3 font-semibold text-right">Pri Profit</th>
-                <th className="px-4 py-3 font-semibold text-right">Profit Change</th>
-                <th className="px-4 py-3 font-semibold text-center w-20">Erosion Rank</th>
+                <th className="px-4 py-3 font-semibold text-center w-12">序号</th>
+                <th className="px-4 py-3 font-semibold">商家 SKU</th>
+                <th className="px-4 py-3 font-semibold">父 ASIN</th>
+                <th className="px-4 py-3 font-semibold">商品名称</th>
+                <th className="px-4 py-3 font-semibold text-right">本期销售额</th>
+                <th className="px-4 py-3 font-semibold text-right">上期销售额</th>
+                <th className="px-4 py-3 font-semibold text-right">销售额变化</th>
+                <th className="px-4 py-3 font-semibold text-right">周期变化率</th>
+                <th className="px-4 py-3 font-semibold text-right">本期利润</th>
+                <th className="px-4 py-3 font-semibold text-right">上期利润</th>
+                <th className="px-4 py-3 font-semibold text-right">利润变化</th>
+                <th className="px-4 py-3 font-semibold text-center w-20">下降排名</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--color-border)] bg-white font-sans">
               {diagnosedRows.length === 0 ? (
                 <tr>
                   <td colSpan={12} className="px-4 py-12 text-center text-[var(--color-muted)] font-serif-heading italic">
-                    No active SKU performance data found for period {currentPeriod}. Check your configurations or load more raw data.
+                    以下周期暂无商品数据： {currentPeriod}。请检查周期配置，或导入相应的原始数据。
                   </td>
                 </tr>
               ) : (
@@ -246,7 +246,7 @@ export default function AnlySKUPerformanceTable({
                               ? 'bg-red-100 text-[var(--color-negative)] border border-red-200'
                               : 'bg-orange-50 text-orange-700'
                           }`}>
-                            Rank {row.profitContributionRank}
+                            排名 {row.profitContributionRank}
                           </span>
                         ) : (
                           <span className="text-slate-400 font-mono">—</span>
@@ -260,7 +260,7 @@ export default function AnlySKUPerformanceTable({
           </table>
         </div>
         <div className="text-[11px] text-[var(--color-muted)] mt-3">
-          Showing diagnostic results for {diagnosedRows.length} active products trading in {currentPeriod}.
+          当前展示 {diagnosedRows.length} 个有经营记录商品的分析结果，周期： {currentPeriod}.
         </div>
       </div>
     </div>

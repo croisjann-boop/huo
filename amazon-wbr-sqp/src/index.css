@@ -1,3 +1,4 @@
+/* 2026-11-08：简体中文显示适配，保留原作者授权声明。 */
 @import "@fontsource/eb-garamond/latin-500.css";
 @import "@fontsource/eb-garamond/latin-600.css";
 @import "@fontsource/eb-garamond/latin-700.css";
@@ -175,3 +176,9 @@ body {
   background: var(--color-accent);
   border-radius: 2px;
 }
+
+/* 简体中文界面：原字体后补充中文系统字体，保留原有布局与数值字体。 */
+body { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; }
+
+/* 中文菜单和表格保持横向阅读，窄屏可滚动查看。 */
+table th, table td { white-space: nowrap; }

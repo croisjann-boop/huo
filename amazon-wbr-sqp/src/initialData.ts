@@ -1,3 +1,4 @@
+// 2026-11-08: 简体中文界面适配；保留原作者 Apache-2.0 许可证。
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -6,11 +7,11 @@
 import { SKUMapRow, RawSellerCentralRow, RawSellerboardRow, RawSQPRow } from './types';
 
 export const INITIAL_SKU_MAP: SKUMapRow[] = [
-  { sku: 'ARES-PRO-BLK', parentAsin: 'B0D12345AB', name: 'Ares Pro Ergonomic Chair (Black)', productLine: 'Ergonomic Chairs' },
-  { sku: 'ARES-PRO-GRY', parentAsin: 'B0D12345AB', name: 'Ares Pro Ergonomic Chair (Grey)', productLine: 'Ergonomic Chairs' },
-  { sku: 'ARES-LITE-WHT', parentAsin: 'B0D12345CD', name: 'Ares Lite Mesh Office Chair (White)', productLine: 'Office Chairs' },
-  { sku: 'ZEPHYR-STAND-M', parentAsin: 'B0D67890EF', name: 'Zephyr Bamboo Desk Stand (Medium)', productLine: 'Desk Accessories' },
-  { sku: 'ZEPHYR-STAND-L', parentAsin: 'B0D67890EF', name: 'Zephyr Bamboo Desk Stand (Large)', productLine: 'Desk Accessories' },
+  { sku: 'ARES-PRO-BLK', parentAsin: 'B0D12345AB', name: 'Ares Pro 人体工学椅（黑色）', productLine: '人体工学椅' },
+  { sku: 'ARES-PRO-GRY', parentAsin: 'B0D12345AB', name: 'Ares Pro 人体工学椅（灰色）', productLine: '人体工学椅' },
+  { sku: 'ARES-LITE-WHT', parentAsin: 'B0D12345CD', name: 'Ares Lite 网布办公椅（白色）', productLine: '办公椅' },
+  { sku: 'ZEPHYR-STAND-M', parentAsin: 'B0D67890EF', name: 'Zephyr 竹制桌面支架（中号）', productLine: '桌面配件' },
+  { sku: 'ZEPHYR-STAND-L', parentAsin: 'B0D67890EF', name: 'Zephyr 竹制桌面支架（大号）', productLine: '桌面配件' },
 ];
 
 // Helper to generate dates in 2026 W26 (June 22 - June 28) and W27 (June 29 - July 05)

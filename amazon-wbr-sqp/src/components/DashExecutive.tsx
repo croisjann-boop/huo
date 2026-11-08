@@ -1,3 +1,4 @@
+// 2026-11-08: 简体中文界面适配；保留原作者 Apache-2.0 许可证。
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -92,7 +93,7 @@ export default function DashExecutive({
       if (dimension === 'sku') return r.sku;
       if (dimension === 'parentAsin') return r.parentAsin;
       const m = skuMap.find(item => item.sku === r.sku);
-      return m?.productLine || 'General Catalog';
+      return m?.productLine || "未分类产品线";
     };
 
     factSales.forEach(r => {
@@ -122,14 +123,14 @@ export default function DashExecutive({
       if (dimension === 'sku') {
         const m = skuMap.find(item => item.sku === key);
         label = key;
-        sublabel = m?.name || 'Unmapped Product';
+        sublabel = m?.name || "未匹配商品";
       } else if (dimension === 'parentAsin') {
         const m = skuMap.find(item => item.parentAsin === key);
-        label = `Parent ASIN: ${key}`;
-        sublabel = m ? m.productLine : 'Product Catalog';
+        label = `父 ASIN：${key}`;
+        sublabel = m ? m.productLine : "商品目录";
       } else {
         label = key;
-        sublabel = 'Product Group';
+        sublabel = "产品组";
       }
 
       return {
@@ -187,7 +188,7 @@ export default function DashExecutive({
         ctrBelowMarketPct: 0,
         cvrBelowMarketPct: 0,
         totalKeywords: 0,
-        primaryLeakageReason: 'No SQP Data Loaded'
+        primaryLeakageReason: "尚未导入搜索词数据"
       };
     }
 
@@ -216,27 +217,27 @@ export default function DashExecutive({
     const cvrBelowMarketPct = curSqp.length > 0 ? cvrBelowMarket / curSqp.length : 0;
 
     // Diagnose primary origin of traffic leakage
-    let primaryLeakageReason = 'Healthy Traffic Funnel';
+    let primaryLeakageReason = "流量漏斗指标正常";
     let recommendations: string[] = [];
 
     if (searchVolumeChange < -0.05) {
-      recommendations.push('Market-wide contraction: Adjust stock planning & focus on defensive search rankings.');
+      recommendations.push("市场搜索需求下降：结合实际情况检查备货计划与核心搜索词表现。");
     }
     if (ctrBelowMarketPct >= 0.5) {
-      recommendations.push('ACoS & CTR pressure: Main image split-testing, pricing optimization, or ad match-type tightening.');
+      recommendations.push("点击率承压：可检查主图、定价及广告匹配方式，并通过对照测试验证。");
     }
     if (cvrBelowMarketPct >= 0.5) {
-      recommendations.push('Conversion leak: Audit price elasticity, A+ content, customer reviews, or video assets.');
+      recommendations.push("转化率偏低：可检查价格、A+ 页面、客户评价及视频内容。");
     }
 
     if (searchVolumeChange < -0.05 && ctrBelowMarketPct < 0.4 && cvrBelowMarketPct < 0.4) {
-      primaryLeakageReason = 'Shrinking Market Demand (External contraction)';
+      primaryLeakageReason = "市场搜索需求下降（外部需求变化）";
     } else if (ctrBelowMarketPct >= 0.5 && ctrBelowMarketPct >= cvrBelowMarketPct) {
-      primaryLeakageReason = 'Weaker Click-Through Rates (Listing Impression & Pricing Gaps)';
+      primaryLeakageReason = "点击率偏低（需检查商品展示与价格）";
     } else if (cvrBelowMarketPct >= 0.5 && cvrBelowMarketPct > ctrBelowMarketPct) {
-      primaryLeakageReason = 'Declining Conversion Performance (Detail Page & Review Gaps)';
+      primaryLeakageReason = "转化表现下降（需检查详情页与评价）";
     } else if (ctrBelowMarketPct >= 0.4 && cvrBelowMarketPct >= 0.4) {
-      primaryLeakageReason = 'Double Deficit (Both Click-Through and Conversion Benchmarks Lagging)';
+      primaryLeakageReason = "双重不足（点击率与转化率均低于基准）";
     }
 
     return {
@@ -246,7 +247,7 @@ export default function DashExecutive({
       cvrBelowMarketPct,
       totalKeywords: curSqp.length,
       primaryLeakageReason,
-      recommendations: recommendations.length > 0 ? recommendations : ['All traffic indicators performing within healthy ranges. Ensure target bids are competitive.']
+      recommendations: recommendations.length > 0 ? recommendations : ["当前流量指标处于规则设定的正常范围，可继续观察出价与转化表现。"]
     };
   }, [factSqp, currentPeriod, priorPeriod]);
 
@@ -331,24 +332,24 @@ export default function DashExecutive({
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[11px] font-semibold tracking-wider text-[var(--color-accent)] uppercase block">
-              Executive Performance Cockpit
+              经营分析中心
             </span>
             <span className="text-[10px] bg-blue-50 text-[var(--color-accent)] px-2 py-0.5 rounded-full font-mono">
-              Auto-Compiled Database
+              数据自动汇总
             </span>
           </div>
           <h2 className="font-serif-heading text-2xl font-bold text-[var(--color-primary)]">
-            Amazon Business Review Executive Dashboard
+            亚马逊经营周报与搜索词分析看板
           </h2>
           <p className="text-[12px] text-[var(--color-muted)] mt-1">
-            Replicates high-end SaaS analytics. Tracks weekly, monthly, and yearly business metrics with zero manual rebuilding.
+            按周期查看销售、利润与广告投入，分析商品贡献和搜索词表现。
           </p>
         </div>
         
         {/* Dynamic Period Selector */}
         <div className="flex items-center gap-3">
           <label className="text-[11px] font-semibold tracking-wider text-[var(--color-muted)] uppercase shrink-0" htmlFor="period-selector">
-            Select Analysis Period:
+            选择分析周期：
           </label>
           <select
             id="period-selector"
@@ -369,10 +370,10 @@ export default function DashExecutive({
         <div className="bg-white p-6 rounded-xl shadow-md card relative overflow-hidden" id="kpi-revenue">
           <div className="flex justify-between items-start mb-2">
             <span className="text-[11px] font-semibold tracking-wider text-[var(--color-muted)] uppercase">
-              Sales Revenue
+              销售额
             </span>
             <span className="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono">
-              vs {priorPeriod}
+              对比 {priorPeriod}
             </span>
           </div>
           <p className="font-serif-display text-3xl font-bold text-[var(--color-primary)] tracking-tight">
@@ -380,7 +381,7 @@ export default function DashExecutive({
           </p>
           <div className="flex items-center justify-between mt-3 border-t border-[var(--color-border)] pt-2 text-[12px]">
             <span className="text-[var(--color-muted)] font-mono">
-              Prev: {formatCurrency(priMetrics.revenue)}
+              上期： {formatCurrency(priMetrics.revenue)}
             </span>
             <span className={`font-semibold flex items-center gap-0.5 font-sans ${trends.revenue > 0 ? 'text-green-600' : 'text-red-500'}`}>
               {trends.revenue > 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />} 
@@ -393,15 +394,15 @@ export default function DashExecutive({
         <div className="bg-white p-6 rounded-xl shadow-md card relative overflow-hidden" id="kpi-profit">
           <div className="flex justify-between items-start mb-2">
             <span className="text-[11px] font-semibold tracking-wider text-[var(--color-muted)] uppercase">
-              Net Profit
+              净利润
             </span>
             {curMetrics.profit < 0 ? (
               <span className="text-[10px] bg-red-100 text-[var(--color-negative)] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse">
-                Loss
+                亏损
               </span>
             ) : (
               <span className="text-[10px] bg-green-50 text-green-600 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-                Healthy
+                盈利
               </span>
             )}
           </div>
@@ -410,7 +411,7 @@ export default function DashExecutive({
           </p>
           <div className="flex items-center justify-between mt-3 border-t border-[var(--color-border)] pt-2 text-[12px]">
             <span className="text-[var(--color-muted)] font-mono">
-              Prev: {formatCurrency(priMetrics.profit)}
+              上期： {formatCurrency(priMetrics.profit)}
             </span>
             <span className={`font-semibold flex items-center gap-0.5 font-sans ${trends.profit > 0 ? 'text-green-600' : 'text-red-500'}`}>
               {trends.profit > 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />} 
@@ -423,7 +424,7 @@ export default function DashExecutive({
         <div className="bg-white p-6 rounded-xl shadow-md card relative overflow-hidden" id="kpi-ppc">
           <div className="flex justify-between items-start mb-2">
             <span className="text-[11px] font-semibold tracking-wider text-[var(--color-muted)] uppercase">
-              PPC Spend
+              广告花费
             </span>
           </div>
           <p className="font-serif-display text-3xl font-bold text-[var(--color-primary)] tracking-tight">
@@ -431,7 +432,7 @@ export default function DashExecutive({
           </p>
           <div className="flex items-center justify-between mt-3 border-t border-[var(--color-border)] pt-2 text-[12px]">
             <span className="text-[var(--color-muted)] font-mono">
-              Prev: {formatCurrency(priMetrics.ppc)}
+              上期： {formatCurrency(priMetrics.ppc)}
             </span>
             <span className={`font-semibold flex items-center gap-0.5 font-sans ${trends.ppc < 0 ? 'text-green-600' : 'text-amber-600'}`}>
               {trends.ppc > 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />} 
@@ -444,7 +445,7 @@ export default function DashExecutive({
         <div className="bg-white p-6 rounded-xl shadow-md card relative overflow-hidden" id="kpi-acos">
           <div className="flex justify-between items-start mb-2">
             <span className="text-[11px] font-semibold tracking-wider text-[var(--color-muted)] uppercase">
-              Overall ACoS
+              广告总费比（TACOS）
             </span>
           </div>
           <p className="font-serif-display text-3xl font-bold text-[var(--color-accent)] tracking-tight">
@@ -452,7 +453,7 @@ export default function DashExecutive({
           </p>
           <div className="flex items-center justify-between mt-3 border-t border-[var(--color-border)] pt-2 text-[12px]">
             <span className="text-[var(--color-muted)] font-mono">
-              Prev: {formatPercent(priMetrics.acos)}
+              上期： {formatPercent(priMetrics.acos)}
             </span>
             <span className={`font-semibold flex items-center gap-0.5 font-sans ${trends.acos <= 0 ? 'text-green-600' : 'text-red-500'}`}>
               {trends.acos > 0 ? '▲ +' : '▼ -'}{formatPercent(Math.abs(trends.acos))}
@@ -467,10 +468,10 @@ export default function DashExecutive({
           <ShieldAlert size={20} className="text-[var(--color-negative)] shrink-0 mt-0.5 animate-bounce" />
           <div>
             <h4 className="font-serif-heading text-base font-bold text-[var(--color-negative)]">
-              Severe Diagnostics Warnings Triggered (Action Required)
+              重点经营变化提醒
             </h4>
             <p className="text-[12px] text-slate-700 mt-1 leading-relaxed">
-              Active leaks detected this period. {hasSevereProfitErosion && "At least one product line/SKU is suffering material profit decline."} {hasSevereShareErosion && "Core search keywords are experiencing significant purchase share erosion."} Locate specific root causes below.
+              本期检测到以下变化： {hasSevereProfitErosion && "部分产品线或商品的利润出现下降。"} {hasSevereShareErosion && "部分核心搜索词的购买份额下降。"} 请结合下方明细进一步核查，规则提示不代表因果已确认。
             </p>
           </div>
         </div>
@@ -481,22 +482,22 @@ export default function DashExecutive({
         <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-[var(--color-border)] pb-4 mb-6 gap-4">
           <div>
             <h3 className="font-serif-heading text-lg font-bold text-[var(--color-primary)]">
-              Growth Drivers &amp; Decline Culprit Backtracking
+              增长贡献与下降贡献分析
             </h3>
             <p className="text-[11px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
-              Isolate performance contributors by SKU, Parent ASIN, or Product Group
+              按 SKU、父 ASIN 或产品组查看变化贡献
             </p>
           </div>
           
           {/* Interactive controls */}
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-semibold text-[var(--color-muted)] uppercase">Analyze By:</span>
+              <span className="text-[11px] font-semibold text-[var(--color-muted)] uppercase">分析维度：</span>
               <div className="inline-flex rounded-md shadow-sm bg-slate-100 p-0.5">
                 {[
                   { id: 'sku', label: 'SKU' },
-                  { id: 'parentAsin', label: 'Parent ASIN' },
-                  { id: 'productLine', label: 'Product Group' }
+                  { id: 'parentAsin', label: "父 ASIN" },
+                  { id: 'productLine', label: "产品组" }
                 ].map(item => (
                   <button
                     key={item.id}
@@ -514,11 +515,11 @@ export default function DashExecutive({
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-semibold text-[var(--color-muted)] uppercase">Metric:</span>
+              <span className="text-[11px] font-semibold text-[var(--color-muted)] uppercase">分析指标：</span>
               <div className="inline-flex rounded-md shadow-sm bg-slate-100 p-0.5">
                 {[
-                  { id: 'revenue', label: 'Revenue' },
-                  { id: 'profit', label: 'Net Profit' }
+                  { id: 'revenue', label: "销售额" },
+                  { id: 'profit', label: "净利润" }
                 ].map(item => (
                   <button
                     key={item.id}
@@ -545,13 +546,13 @@ export default function DashExecutive({
                 <TrendingUp size={16} />
               </span>
               <h4 className="font-serif-heading text-[15px] font-bold text-green-700">
-                Top Growth Drivers (Positive Change)
+                主要增长贡献（正向变化）
               </h4>
             </div>
 
             {dimensionAnalysis.positiveDrivers.length === 0 ? (
               <div className="py-8 text-center text-[var(--color-muted)] italic text-[12px]">
-                No growth drivers found for the selected configuration.
+                当前条件下暂无正向增长贡献。
               </div>
             ) : (
               <div className="space-y-3">
@@ -579,7 +580,7 @@ export default function DashExecutive({
                             +{formatCurrency(val)}
                           </span>
                           <span className="text-[10px] text-slate-500 block font-mono">
-                            Rate: +{formatPercentOneDecimal(growthRate)}
+                            变化率：+{formatPercentOneDecimal(growthRate)}
                           </span>
                         </div>
                       </div>
@@ -607,13 +608,13 @@ export default function DashExecutive({
                 <TrendingDown size={16} />
               </span>
               <h4 className="font-serif-heading text-[15px] font-bold text-[var(--color-negative)]">
-                Primary Decline Culprits (Negative Change)
+                主要下降贡献（负向变化）
               </h4>
             </div>
 
             {dimensionAnalysis.negativeDrivers.length === 0 ? (
               <div className="py-8 text-center text-[var(--color-muted)] italic text-[12px]">
-                No contraction culprits detected. Excellent catalogs health!
+                当前条件下暂无负向变化贡献。
               </div>
             ) : (
               <div className="space-y-3">
@@ -641,7 +642,7 @@ export default function DashExecutive({
                             -{formatCurrency(Math.abs(val))}
                           </span>
                           <span className="text-[10px] text-slate-500 block font-mono">
-                            Rate: {formatPercentOneDecimal(growthRate)}
+                            变化率： {formatPercentOneDecimal(growthRate)}
                           </span>
                         </div>
                       </div>
@@ -668,16 +669,16 @@ export default function DashExecutive({
       <div className="bg-white p-6 rounded-xl shadow-md border border-[var(--color-border)]" id="traffic-diagnostics-container">
         <div className="border-b border-[var(--color-border)] pb-4 mb-6">
           <h3 className="font-serif-heading text-lg font-bold text-[var(--color-primary)]">
-            Traffic Loss Origin Diagnostics Engine (SQP Intelligence)
+            搜索词流量与转化诊断
           </h3>
           <p className="text-[11px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
-            Determines whether traffic losses originate from Market Demand, CTR constraints, or CVR Gaps
+            对比市场搜索需求、点击率和转化率，辅助排查流量变化
           </p>
         </div>
 
         {!trafficLossDiagnostic.hasData ? (
           <div className="py-8 text-center text-[var(--color-muted)] font-serif-heading italic">
-            Search Query Performance (SQP) data missing for this period. Upload SQP reports in Raw_SQP to unlock funnel origin auditing.
+            本期暂无搜索词数据，请在「搜索词原始数据」中导入报表。
           </div>
         ) : (
           <div className="space-y-6">
@@ -686,19 +687,19 @@ export default function DashExecutive({
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <span className="text-[10px] bg-[var(--color-accent)] text-white px-2 py-0.5 rounded font-mono font-bold uppercase">
-                  Engine Ruling
+                  规则分析结果
                 </span>
                 <h4 className="font-serif-heading text-base font-bold text-[var(--color-primary)] mt-1.5">
-                  Primary Leakage Vector: <span className="text-[var(--color-accent)]">{trafficLossDiagnostic.primaryLeakageReason}</span>
+                  主要关注方向： <span className="text-[var(--color-accent)]">{trafficLossDiagnostic.primaryLeakageReason}</span>
                 </h4>
                 <p className="text-[12px] text-slate-600 mt-1">
-                  Automated auditing based on Amazon Search Query Performance benchmarks.
+                  根据搜索词报表与市场基准进行规则分析，结论需结合实际业务验证。
                 </p>
               </div>
               <div className="text-left md:text-right shrink-0">
-                <span className="text-[10px] text-[var(--color-muted)] uppercase font-semibold block">Audit Sample Size</span>
+                <span className="text-[10px] text-[var(--color-muted)] uppercase font-semibold block">本期分析样本</span>
                 <span className="font-mono text-xl font-bold text-[var(--color-primary)]">
-                  {trafficLossDiagnostic.totalKeywords} Core Keywords
+                  {trafficLossDiagnostic.totalKeywords} 个核心关键词
                 </span>
               </div>
             </div>
@@ -710,7 +711,7 @@ export default function DashExecutive({
               <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/40 relative">
                 <div className="flex justify-between items-start mb-2">
                   <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                    1. Market Demand (Volume)
+                    1. 市场搜索需求变化
                   </span>
                   <Search size={16} className="text-slate-400" />
                 </div>
@@ -718,7 +719,7 @@ export default function DashExecutive({
                   {trafficLossDiagnostic.searchVolumeChange > 0 ? '+' : ''}{formatPercentOneDecimal(trafficLossDiagnostic.searchVolumeChange)}
                 </p>
                 <span className="text-[11px] text-slate-500 block mt-1.5 leading-relaxed">
-                  Market search volume trend across all core search queries. Negative change indicates shrinking macro demand.
+                  核心搜索词的市场总搜索量变化；负值表示样本搜索词的需求下降。
                 </span>
               </div>
 
@@ -726,7 +727,7 @@ export default function DashExecutive({
               <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/40">
                 <div className="flex justify-between items-start mb-2">
                   <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                    2. CTR Benchmark Deficit
+                    2. 点击率低于基准的占比
                   </span>
                   <Target size={16} className="text-slate-400" />
                 </div>
@@ -734,7 +735,7 @@ export default function DashExecutive({
                   {formatPercent(trafficLossDiagnostic.ctrBelowMarketPct)}
                 </p>
                 <span className="text-[11px] text-slate-500 block mt-1.5 leading-relaxed">
-                  Percentage of queries where Brand CTR lags market average. Above 50% points to listing impression/main image deficits.
+                  品牌点击率低于市场基准的关键词比例，超过 50% 时提示检查主图、价格等因素。
                 </span>
               </div>
 
@@ -742,7 +743,7 @@ export default function DashExecutive({
               <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/40">
                 <div className="flex justify-between items-start mb-2">
                   <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                    3. CVR Benchmark Deficit
+                    3. 转化率低于基准的占比
                   </span>
                   <Users size={16} className="text-slate-400" />
                 </div>
@@ -750,7 +751,7 @@ export default function DashExecutive({
                   {formatPercent(trafficLossDiagnostic.cvrBelowMarketPct)}
                 </p>
                 <span className="text-[11px] text-slate-500 block mt-1.5 leading-relaxed">
-                  Percentage of queries where Brand CVR lags market average. Above 50% points to detail page layout or reviews leaks.
+                  品牌转化率低于市场基准的关键词比例，超过 50% 时提示检查详情页与评价等因素。
                 </span>
               </div>
 
@@ -759,7 +760,7 @@ export default function DashExecutive({
             {/* Action Recommendations List */}
             <div className="bg-blue-50/50 p-4 rounded-lg border border-blue-100/50">
               <h5 className="font-semibold text-[12px] text-[var(--color-accent)] uppercase tracking-wider mb-2">
-                Operational Playbook Recommendations:
+                可进一步核查的方向：
               </h5>
               <ul className="space-y-1.5">
                 {trafficLossDiagnostic.recommendations.map((rec, i) => (
@@ -783,20 +784,20 @@ export default function DashExecutive({
             <div className="flex items-center justify-between border-b border-[var(--color-border)] pb-3 mb-4">
               <div>
                 <h3 className="font-serif-heading text-lg font-bold text-[var(--color-primary)]">
-                  Top 5 Profit-Loss SKU Diagnosis
+                  重点商品利润下降明细
                 </h3>
                 <p className="text-[11px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
-                  Primary profit erosion culprits (Cur vs Pri)
+                  本期与上期的利润变化
                 </p>
               </div>
               <span className="text-[10px] bg-red-100 text-[var(--color-negative)] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                Leaks
+                下降关注
               </span>
             </div>
 
             {dimensionAnalysis.negativeDrivers.length === 0 ? (
               <div className="py-12 text-center text-[var(--color-muted)] font-serif-heading italic">
-                No active profit erosion detected among trading SKUs this period. Excellent health!
+                本期商品暂无利润下降记录。
               </div>
             ) : (
               <div className="space-y-4">
@@ -821,7 +822,7 @@ export default function DashExecutive({
                           -{formatCurrency(Math.abs(driverMetric === 'revenue' ? item.revChg : item.profChg))}
                         </span>
                         <span className="text-[10px] text-[var(--color-muted)] block font-mono">
-                          Curr: {formatCurrency(driverMetric === 'revenue' ? item.curRev : item.curProf)}
+                          本期： {formatCurrency(driverMetric === 'revenue' ? item.curRev : item.curProf)}
                         </span>
                       </div>
                     </div>
@@ -831,7 +832,7 @@ export default function DashExecutive({
             )}
           </div>
           <div className="text-[11px] text-[var(--color-muted)] pt-4 mt-4 border-t border-slate-100">
-            * Sorting absolute drops in net earnings to identify critical margins leaks.
+            * 按净利润减少金额排序，帮助识别利润变化较大的商品。
           </div>
         </div>
 
@@ -841,20 +842,20 @@ export default function DashExecutive({
             <div className="flex items-center justify-between border-b border-[var(--color-border)] pb-3 mb-4">
               <div>
                 <h3 className="font-serif-heading text-lg font-bold text-[var(--color-primary)]">
-                  Keyword Purchase Share Leaks
+                  搜索词购买份额下降
                 </h3>
                 <p className="text-[11px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
-                  Core traffic leakage queries (Cur vs Pri)
+                  核心搜索词的本期与上期对比
                 </p>
               </div>
               <span className="text-[10px] bg-red-100 text-[var(--color-negative)] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                Early Warning
+                份额预警
               </span>
             </div>
 
             {earlyWarningShareLossKeywords.length === 0 ? (
               <div className="py-12 text-center text-[var(--color-muted)] font-serif-heading italic">
-                No market share drop observed on core search queries this period.
+                本期核心搜索词暂无符合规则的购买份额下降。
               </div>
             ) : (
               <div className="space-y-4">
@@ -869,7 +870,7 @@ export default function DashExecutive({
                           "{item.searchQuery}"
                         </span>
                         <span className="text-[10px] text-[var(--color-muted)] block font-mono">
-                          Search Vol: {formatInteger(item.searchVolume)}
+                          搜索量： {formatInteger(item.searchVolume)}
                         </span>
                       </div>
                       <div className="text-right">
@@ -877,7 +878,7 @@ export default function DashExecutive({
                           -{formatPercent(Math.abs(item.shareChange))}
                         </span>
                         <span className="text-[10px] text-[var(--color-muted)] block font-mono">
-                          Curr: {formatPercent(item.curShare)}
+                          本期： {formatPercent(item.curShare)}
                         </span>
                       </div>
                     </div>
@@ -887,7 +888,7 @@ export default function DashExecutive({
             )}
           </div>
           <div className="text-[11px] text-[var(--color-muted)] pt-4 mt-4 border-t border-slate-100">
-            * Identifies declining brand buy-funnel share on high-volume traffic channels.
+            * 识别高搜索量关键词中品牌购买份额下降的记录。
           </div>
         </div>
       </div>
@@ -896,10 +897,10 @@ export default function DashExecutive({
       <div className="bg-white p-6 rounded-xl shadow-md border border-[var(--color-border)]" id="historical-review-container">
         <div className="border-b border-[var(--color-border)] pb-4 mb-4">
           <h3 className="font-serif-heading text-lg font-bold text-[var(--color-primary)]">
-            Standard Executive Historical Business Ledger
+            历史周期经营汇总
           </h3>
           <p className="text-[11px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
-            Aggregated business review history with consistent period-over-period comparisons
+            按周期汇总经营表现，并与相邻的有数据周期进行对比
           </p>
         </div>
 
@@ -907,15 +908,15 @@ export default function DashExecutive({
           <table className="w-full border-collapse text-left text-[13px]" id="historical-review-table">
             <thead className="bg-[var(--table-header-bg)] text-[var(--color-primary)] border-b-2 border-[var(--table-header-sep)] text-[11px] uppercase tracking-wider font-semibold">
               <tr>
-                <th className="px-4 py-3 font-semibold">Period Tag</th>
-                <th className="px-4 py-3 text-right font-semibold">Sales Revenue</th>
-                <th className="px-4 py-3 text-right font-semibold">Revenue Change</th>
-                <th className="px-4 py-3 text-right font-semibold">Net Profit</th>
-                <th className="px-4 py-3 text-right font-semibold">Profit Change</th>
-                <th className="px-4 py-3 text-right font-semibold">PPC Spend</th>
-                <th className="px-4 py-3 text-right font-semibold">Spend Change</th>
-                <th className="px-4 py-3 text-right font-semibold">ACoS</th>
-                <th className="px-4 py-3 text-right font-semibold">ACoS Difference</th>
+                <th className="px-4 py-3 font-semibold">统计周期</th>
+                <th className="px-4 py-3 text-right font-semibold">销售额</th>
+                <th className="px-4 py-3 text-right font-semibold">销售额变化率</th>
+                <th className="px-4 py-3 text-right font-semibold">净利润</th>
+                <th className="px-4 py-3 text-right font-semibold">利润变化</th>
+                <th className="px-4 py-3 text-right font-semibold">广告花费</th>
+                <th className="px-4 py-3 text-right font-semibold">花费变化率</th>
+                <th className="px-4 py-3 text-right font-semibold">广告总费比</th>
+                <th className="px-4 py-3 text-right font-semibold">费比变化（百分点）</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--color-border)] bg-white font-sans">
@@ -928,7 +929,7 @@ export default function DashExecutive({
                       : 'even:bg-slate-50/60 hover:bg-slate-50'
                   }`}
                   onClick={() => onUpdatePeriod(row.period)}
-                  title="Click to load this analysis period as primary"
+                  title="点击切换到此分析周期"
                 >
                   <td className="px-4 py-3 font-mono font-bold text-[var(--color-primary)] flex items-center gap-1.5">
                     {row.period === currentPeriod && (
@@ -983,7 +984,7 @@ export default function DashExecutive({
           </table>
         </div>
         <div className="text-[11px] text-[var(--color-muted)] mt-3">
-          * Consistent WoW / MoM Comparisons are generated dynamically by comparing adjacent periods chronologically. Click any row to set it as active.
+          * 按时间顺序比较相邻的有数据周期；点击记录可切换当前分析周期。
         </div>
       </div>
 

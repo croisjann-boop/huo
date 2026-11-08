@@ -1,3 +1,4 @@
+// 2026-11-08: 简体中文界面适配；保留原作者 Apache-2.0 许可证。
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -93,7 +94,7 @@ export default function App() {
     localStorage.setItem('amz_raw_sellerboard', JSON.stringify(rawSellerboard));
     localStorage.setItem('amz_raw_sqp', JSON.stringify(rawSQP));
 
-    const timeStr = new Date().toLocaleTimeString('en-US', {
+    const timeStr = new Date().toLocaleTimeString('zh-CN', {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
@@ -145,7 +146,7 @@ export default function App() {
 
       // XLOOKUP Parent ASIN in SKU Map
       const mapItem = config.skuMap.find(item => item.sku === sku);
-      const parentAsin = mapItem ? mapItem.parentAsin : 'Unmapped';
+      const parentAsin = mapItem ? mapItem.parentAsin : '未匹配';
 
       // Sumifs from sellerboard
       const sbMatches = rawSellerboard.filter(r => r.date === date && r.sku === sku);
@@ -233,13 +234,13 @@ export default function App() {
           setRawSellerCentral(payload.rawSellerCentral);
           setRawSellerboard(payload.rawSellerboard);
           setRawSQP(payload.rawSQP);
-          alert('Backup imported successfully! All ledger formulas re-aligned.');
+          alert("备份导入成功！所有报表已重新计算。");
           setActiveTab('dash_executive');
         } else {
-          alert('Invalid backup schema. Required worksheets parameters missing.');
+          alert("备份格式无效，缺少必要的配置或数据表。");
         }
       } catch (err) {
-        alert('Failed to parse backup JSON. File corrupted.');
+        alert("无法读取 JSON 备份，请检查文件是否完整。");
       }
     };
     reader.readAsText(file);
@@ -248,7 +249,7 @@ export default function App() {
   };
 
   const handleResetData = () => {
-    if (confirm('Are you sure you want to reset all data back to the demo workspace defaults? All customized worksheets will be overwritten.')) {
+    if (confirm("确定恢复默认演示数据吗？当前自定义配置和数据表将被覆盖，请先导出备份。")) {
       localStorage.removeItem('amz_config');
       localStorage.removeItem('amz_raw_seller_central');
       localStorage.removeItem('amz_raw_sellerboard');
@@ -272,38 +273,38 @@ export default function App() {
     <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-body-text)] flex flex-col font-sans selection:bg-blue-100 selection:text-[var(--color-accent)]">
       
       {/* ─── STICKY TOP NAVIGATION BAR (56px) ─── */}
-      <nav className="sticky top-0 z-50 h-[56px] bg-white border-b border-[var(--nav-border)] shadow-nav flex items-center justify-between px-6 select-none">
+      <nav className="sticky top-0 z-50 bg-white border-b border-[var(--nav-border)] shadow-nav flex flex-col px-6 select-none">
         
         {/* Left Side: Brand Logo & Product Note */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-3 shrink-0 py-3">
           <span className="font-serif-display text-xl font-bold tracking-tight text-[var(--color-primary)]">
-            Theseus Workshop
+            忒修斯工作室
           </span>
           <span className="text-gray-300 select-none">|</span>
           <span className="text-[12px] font-mono text-[var(--color-muted)] tracking-tight">
-            amazon-wbr-sqp-analytics-template
+            亚马逊经营周报与搜索词分析
           </span>
         </div>
 
         {/* Right Side: Tab switcher corresponding to 9 sheets */}
-        <div className="flex h-full overflow-x-auto custom-scrollbar">
+        <div className="flex h-11 min-w-0 overflow-x-auto custom-scrollbar">
           {[
-            { id: 'dash_executive', label: 'Dash_Executive' },
-            { id: 'config_param', label: 'Config_Param' },
-            { id: 'raw_sellerboard', label: 'Raw_Sellerboard' },
-            { id: 'raw_seller_central', label: 'Raw_Seller_Central' },
-            { id: 'raw_sqp', label: 'Raw_SQP' },
-            { id: 'fact_sales', label: 'Fact_Sales' },
-            { id: 'fact_sqp', label: 'Fact_SQP' },
-            { id: 'anly_sku_performance', label: 'Anly_SKU_Performance' },
-            { id: 'anly_keyword_performance', label: 'Anly_Keyword_Performance' }
+            { id: 'dash_executive', label: "经营总览" },
+            { id: 'config_param', label: "参数设置" },
+            { id: 'raw_sellerboard', label: "利润原始数据" },
+            { id: 'raw_seller_central', label: "销售原始数据" },
+            { id: 'raw_sqp', label: "搜索词原始数据" },
+            { id: 'fact_sales', label: "销售汇总表" },
+            { id: 'fact_sqp', label: "搜索词汇总表" },
+            { id: 'anly_sku_performance', label: "商品表现分析" },
+            { id: 'anly_keyword_performance', label: "关键词表现分析" }
           ].map(tab => {
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`h-full px-4 text-[13px] font-semibold flex items-center relative transition-all cursor-pointer border-b-3 ${
+                className={`h-full px-4 text-[13px] font-semibold flex items-center relative transition-all cursor-pointer border-b-3 shrink-0 whitespace-nowrap ${
                   isActive
                     ? 'border-[var(--color-accent)] text-[var(--color-accent)]'
                     : 'border-transparent text-[var(--nav-text-inactive)] hover:text-[var(--color-primary)]'
@@ -323,11 +324,11 @@ export default function App() {
         <div className="flex items-center gap-4 text-slate-500 font-mono">
           <div className="flex items-center gap-1.5">
             <Clock size={14} className="text-slate-400" />
-            <span>Last saved: <span className="font-bold text-[var(--color-primary)]">{lastSaved || '—'}</span></span>
+            <span>上次保存： <span className="font-bold text-[var(--color-primary)]">{lastSaved || '—'}</span></span>
           </div>
           {isSavedBadgeVisible && (
             <span className="flex items-center gap-1 text-[var(--color-positive)] font-semibold text-[11px] animate-fade-up">
-              <CheckCircle2 size={12} /> Auto-saved
+              <CheckCircle2 size={12} /> 已自动保存
             </span>
           )}
         </div>
@@ -337,17 +338,17 @@ export default function App() {
           <button
             onClick={handleExportBackup}
             className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 py-1 px-3 rounded text-[11px] font-medium transition-all active:scale-97 cursor-pointer"
-            title="Download full JSON snapshot backup of all worksheets"
+            title="下载包含全部配置和数据表的 JSON 备份"
           >
-            <Download size={13} /> Export Backup
+            <Download size={13} /> 导出备份
           </button>
           
           <button
             onClick={() => fileInputRef.current?.click()}
             className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 py-1 px-3 rounded text-[11px] font-medium transition-all active:scale-97 cursor-pointer"
-            title="Restore a previous JSON snapshot file"
+            title="从 JSON 文件恢复配置和数据"
           >
-            <Upload size={13} /> Import Backup
+            <Upload size={13} /> 导入备份
           </button>
           <input
             type="file"
@@ -360,9 +361,9 @@ export default function App() {
           <button
             onClick={handleResetData}
             className="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-[var(--color-negative)] py-1 px-3 rounded text-[11px] font-semibold transition-all active:scale-97 cursor-pointer"
-            title="Restore workspace back to demo parameters"
+            title="恢复默认演示配置和数据"
           >
-            <RotateCcw size={13} /> Reset Data
+            <RotateCcw size={13} /> 恢复演示数据
           </button>
         </div>
       </div>
@@ -466,7 +467,7 @@ export default function App() {
       {/* ─── FOOTER ─── */}
       <footer className="mt-auto py-5 border-t border-[var(--color-border)] text-center bg-white/50">
         <p className="text-[12px] text-[var(--color-muted)]">
-          All data in this tool is stored in your browser's localStorage. The page itself does not retain any user data.
+          数据保存在当前浏览器的本地存储中，刷新后仍可保留。更换浏览器或清除网站数据前，请先导出备份。
         </p>
       </footer>
     </div>
