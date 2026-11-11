@@ -1,0 +1,14 @@
+{
+  "name": "amazon-business-dashboard",
+  "version": "1.0.1",
+  "private": true,
+  "type": "module",
+  "description": "亚马逊销售经营看板：无第三方依赖的模块化前端演示项目",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev": "node scripts/server.mjs",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/server.mjs --dist",
+    "test": "node --test"
+  }
+}

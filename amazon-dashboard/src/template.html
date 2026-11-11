@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#132c48">
+    <meta name="description" content="亚马逊团队销售、广告、单品和经营目标分析演示看板">
+    <title>亚马逊销售经营看板</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script type="module" src="./main.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">跳到看板内容</a>
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">▦</span><div>AMAZON<small>经营驾驶舱</small></div></div>
+      <p class="sidebar-caption">团队销售分析 · DEMO V1</p>
+      <nav id="nav" aria-label="主要导航"></nav>
+      <div class="sidebar-footer"><span class="status-dot"></span> 演示环境<small>数据截止 2026.11.10</small></div>
+    </aside>
+    <main>
+      <header class="top">
+        <div><p class="breadcrumb">团队经营 / <span id="crumb">业绩总览</span></p><h1 id="title">业绩总览</h1><p class="subtitle" id="period"></p></div>
+        <div class="top-actions"><span class="badge">● 虚构模拟数据</span><button id="export" type="button">↓ 导出 CSV</button></div>
+      </header>
+      <section class="filters" aria-label="数据筛选">
+        <label>时间<select id="days"><option value="7">最近7天</option><option value="30" selected>最近30天</option><option value="month">本月累计</option></select></label>
+        <label>国家<select id="country"></select></label>
+        <label>店铺<select id="shop"></select></label>
+        <label>品类<select id="category"><option value="all">全部品类</option><option>户外花园</option><option>家居家具</option></select></label>
+        <label>查看身份<select id="role"><option value="director">总监</option><option value="deputy">副总监</option><option value="manager">店长</option></select></label>
+        <button id="reset-filters" class="text-button" type="button">重置筛选</button>
+      </section>
+      <div id="content"></div>
+      <footer class="footnote">统一折算 USD；推广占比 = 广告花费 / 净销售额；ACOS = 花费 / 广告归因销售额。访客为设备访次加总，非跨设备去重人数。广告统一模拟 7 日归因。</footer>
+    </main>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <noscript>请启用 JavaScript 后使用此看板。</noscript>
+  </body>
+</html>

@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#132c48">
+    <meta name="description" content="亚马逊团队销售、广告、单品和经营目标分析演示看板">
+    <title>亚马逊销售经营看板</title>
+    <style>
+:root{font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif;color:#23344b;background:#f3f6fa;font-size:14px;font-synthesis:none;--navy:#132c48;--gold:#eea039;--muted:#75859a;--border:#e2e8ef;--radius:12px}
+*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button,input,select{padding:9px 12px;border:1px solid #d8e0e9;border-radius:7px;background:#fff;color:#23344b;min-height:38px}button{cursor:pointer;transition:background .15s,border-color .15s}button:hover{background:#f0f5fa;border-color:#b6c8d9}button:disabled{cursor:default;opacity:.55}input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid #7ab4e3;outline-offset:3px}select:disabled{background:#f0f3f7;color:#6d7b8d}button.primary{background:#f3a536;border-color:#f3a536;color:#172d47;font-weight:600}button.primary:hover{background:#e89829}h1,h2,h3,p{margin-top:0}h1{font-size:26px;letter-spacing:-.5px;margin-bottom:8px}h2{font-size:16px;margin-bottom:18px}h3{font-size:14px;margin-bottom:12px}p{line-height:1.8}small,.muted{color:var(--muted);font-size:12px}.red{color:#bc4940}.green{color:#238571}.skip-link{position:fixed;top:-100px;left:15px;z-index:20;padding:12px;background:#fff}.skip-link:focus{top:10px}
+.sidebar{position:fixed;inset:0 auto 0 0;width:226px;background:var(--navy);color:#fff;padding:32px 18px;display:flex;flex-direction:column;z-index:5}.brand{display:flex;gap:12px;align-items:center;font-size:21px;letter-spacing:1px;font-weight:700;padding:0 9px}.brand-mark{font-size:38px;color:#f3a536;line-height:1}.brand small{display:block;color:#fff;font-size:18px;letter-spacing:2px;margin-top:4px}.sidebar-caption{color:#9db0c8;font-size:11px;letter-spacing:.5px;margin:20px 10px 24px}.sidebar nav{display:flex;flex-direction:column;gap:6px}.sidebar nav button{display:flex;align-items:center;gap:16px;border:0;background:none;color:#bccbdb;padding:14px 13px;text-align:left;white-space:nowrap}.sidebar nav button:hover{background:#203b57}.sidebar nav button.active{background:#294765;color:#ffb955}.nav-index{opacity:.55;font-size:11px;letter-spacing:1px}.sidebar-footer{margin-top:auto;padding:32px 12px 0;color:#a6b8cb;font-size:12px}.sidebar-footer small{display:block;color:#8fa5bb;margin-top:13px}.status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#68b798;margin-right:5px}
+main{margin-left:226px;padding:30px 34px;max-width:2000px}.top{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:24px}.breadcrumb{font-size:11px;color:#8c9aaa;margin-bottom:11px;letter-spacing:.5px}.subtitle{font-size:12px;color:var(--muted);margin:0}.top-actions{display:flex;align-items:center;gap:12px}.badge{background:#fff0d9;color:#a26309;padding:8px 12px;border-radius:20px;font-size:11px;white-space:nowrap}.filters{display:flex;gap:14px;align-items:end;flex-wrap:wrap;background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:17px 20px;margin-bottom:22px}.filters label{flex:1;min-width:115px}.filters label, .threshold-grid label{display:flex;flex-direction:column;gap:8px;font-size:12px;color:#60748b}.filters select{width:100%;font-size:13px}.text-button{border-color:transparent;color:#718198;background:none;font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:19px 20px;position:relative;overflow:hidden}.card.featured{border-top:3px solid var(--gold);padding-top:17px}.metric-label{font-size:12px;color:#6f8299}.card strong{display:block;font-size:27px;font-weight:650;letter-spacing:-.7px;font-variant-numeric:tabular-nums;margin:12px 0}.card small{font-size:10px;color:#93a1b1}.panel{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin:20px 0}.panel:first-child{margin-top:0}.split{display:grid;grid-template-columns:minmax(0,2fr) minmax(250px,1fr);gap:18px;margin-top:20px}.split .panel{margin:0}.panel-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px}.panel-heading h2,.panel-heading h3{margin:0}.wrap{flex-wrap:wrap}.goal-value{display:block;font-size:44px;font-weight:600;letter-spacing:-1.5px;margin:30px 0 20px}.goal p{margin-top:18px;margin-bottom:12px}.goal button{margin-top:15px;width:100%}.bar{height:9px;background:#edf1f6;border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--gold);border-radius:6px}.trend{width:100%;height:235px;overflow:visible}.trend text{font-size:11px;fill:#8a9aac}.trend circle:hover{r:5}summary{font-size:12px;color:#367db1;cursor:pointer;padding:8px 0}details .scroll{max-height:250px}
+.scroll{overflow:auto;max-width:100%;border-radius:6px}table{border-collapse:collapse;width:100%;white-space:nowrap;font-size:12px;font-variant-numeric:tabular-nums}td,th{text-align:right;padding:15px 13px;border-bottom:1px solid #eaf0f5}thead th{background:#f7f9fc;color:#718198;font-size:11px;font-weight:500}th:first-child,td:first-child{text-align:left}tbody th{font-weight:600;text-align:left}tbody tr:last-child td,tbody tr:last-child th{border-bottom:0}tbody tr:hover{background:#fbfcfe}tbody th small{display:block;font-size:10px;font-weight:400;line-height:1.8;margin-top:5px}.flag-cell{white-space:normal;min-width:200px;text-align:left}.tag{display:inline-block;font-size:11px;padding:4px 7px;border-radius:5px;background:#f5f7fa;white-space:nowrap;margin:2px}.tag.red{background:#fff1ee}.tag.green{background:#eaf7f1}.inline-controls{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.inline-controls label{display:flex;align-items:center;gap:10px;font-size:12px;color:#718198}.segmented{display:flex;background:#f0f4f8;border-radius:7px;padding:3px}.segmented button{background:transparent;border-color:transparent;padding:5px 15px;min-height:31px;font-size:12px}.segmented .selected{background:#fff;box-shadow:0 1px 4px #132c4812;color:#245b88}.search-label{display:flex;align-items:center;gap:10px;font-size:12px;color:#718198}.search-label input{font-size:12px;width:225px}
+.ad-stack{display:flex;overflow:hidden;border-radius:9px;margin:30px 0 20px}.ad-stack span{color:#fff;padding:22px 0;text-align:center;font-weight:600;min-width:0}.ad-row{display:grid;grid-template-columns:140px minmax(40px,1fr) 130px 40px;gap:20px;align-items:center;padding:22px 0;border-bottom:1px solid #edf1f6}.ad-row:last-child{border:0}.ad-row small{display:block;margin-top:6px}.ad-row strong,.ad-row>span{text-align:right}.note{padding:15px 18px;background:#edf4fb;border:1px solid #dfeaf5;border-radius:8px;line-height:1.9;font-size:12px;color:#58718e}.threshold-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 22px;margin:23px 0}.threshold-grid label{position:relative;color:#41576e}.threshold-grid label span{position:absolute;right:0;top:0;font-size:10px}.threshold-grid input{width:100%;font-size:13px}.form-actions{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0 0}.category-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:20px 0}.category-summary p{background:#f8fafc;padding:14px;border-radius:6px;font-size:12px;margin:0}.category-summary span{display:block;color:#8997a8;margin-top:5px}.diagnosis{border:1px solid #e8edf3;border-left:3px solid #e5ad62;border-radius:8px;padding:18px;margin-top:14px}.diagnosis p{font-size:12px;margin-bottom:8px}.diagnosis p:last-child{margin:0}.source-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:25px 0}.source-card{border:1px solid #e6ecf3;border-radius:9px;padding:20px}.source-card h3{margin:14px 0}.source-card .green{font-size:11px}.source-icon{font-size:12px;color:#8ea0b4}.footnote{color:#8796a9;font-size:10px;line-height:1.9;margin-top:24px}.empty{text-align:center;padding:55px 20px;color:#7a8a9f}.empty h2{color:#455e79}.empty button{margin-top:10px}.toast{position:fixed;bottom:26px;left:calc(50% + 113px);transform:translateX(-50%);max-width:80vw;background:#17334e;color:#fff;padding:13px 22px;border-radius:9px;box-shadow:0 6px 25px #10243830;z-index:30;font-size:12px}[hidden]{display:none!important}
+@media(min-width:1600px){.cards{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media(max-width:1100px){main{padding:25px 22px}.sidebar{width:195px;padding-left:12px;padding-right:12px}main{margin-left:195px}.cards{grid-template-columns:repeat(3,minmax(0,1fr))}.top-actions{flex-wrap:wrap;justify-content:flex-end}.threshold-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.toast{left:calc(50% + 97px)}}
+@media(max-width:850px){.split{grid-template-columns:1fr}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.top{align-items:flex-start}.top-actions{flex-direction:column}.badge{font-size:10px}.threshold-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ad-row{grid-template-columns:85px minmax(20px,1fr) 100px 32px;gap:10px}.category-summary{grid-template-columns:1fr}}
+@media(max-width:600px){.sidebar{position:static;width:100%;padding:20px 16px 10px}.brand{font-size:16px;padding:0}.brand small{display:inline;font-size:15px;margin-left:10px;letter-spacing:1px}.brand-mark{font-size:30px}.sidebar-caption,.sidebar-footer{display:none}.sidebar nav{flex-direction:row;overflow:auto;margin-top:15px;gap:3px}.sidebar nav button{padding:10px 13px;font-size:12px}.nav-index{display:none}main{margin-left:0;padding:22px 14px}.top{gap:10px}.top-actions{gap:8px}h1{font-size:22px}.top-actions button{font-size:11px;padding:6px 10px;min-height:30px}.badge{font-size:9px;padding:6px 8px}.filters{gap:12px;padding:15px}.filters label{min-width:calc(50% - 10px)}.filters .text-button{margin-left:auto}.card{padding:16px 14px}.card.featured{padding-top:14px}.card strong{font-size:23px}.card small{font-size:9px}.panel{padding:18px 14px}.panel-heading{gap:12px}.panel-heading h2{font-size:15px}.source-grid{grid-template-columns:1fr}.threshold-grid{gap:16px 14px}.threshold-grid label{font-size:11px}.threshold-grid label span{font-size:9px}.search-label{width:100%}.search-label input{flex:1;width:auto}.ad-row{grid-template-columns:65px minmax(15px,1fr) 85px 30px;font-size:12px}.ad-row small{font-size:9px}.toast{left:50%;max-width:92vw;min-width:250px}.footnote{font-size:10px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+/* 小屏幕也直接显示全部入口，避免后面的设置页面被横向滚动隐藏。 */
+@media(max-width:600px){.sidebar nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible;gap:5px}.sidebar nav button{justify-content:center;padding:10px 5px;font-size:12px}.sidebar nav button:last-child{grid-column:1 / -1}}
+
+</style>
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+'use strict';
+// mock-data.js
+// 固定演示截止日，确保所有人打开项目时得到相同数据。
+const DATA_END = '2026-11-10';
+const STORES = [
+  { country: '美国', name: '北美旗舰店' },
+  { country: '德国', name: '欧洲生活馆' },
+  { country: '英国', name: '英国家居店' },
+];
+const products = ['庭院遮阳伞', '金属储物棚', '户外棚架', '休闲藤椅', '餐桌组合', '折叠边桌'];
+function dateBefore(date, days) {
+  const value = new Date(`${date}T00:00:00Z`);
+  value.setUTCDate(value.getUTCDate() - days);
+  return value.toISOString().slice(0, 10);
+}
+
+function createMockRows() {
+  const rows = [];
+  for (let offset = 0; offset < 30; offset += 1) {
+    for (let i = 0; i < 18; i += 1) {
+      const productIndex = i % 6;
+      const units = 12 + ((i * 17 + offset * 13) % 39);
+      const revenue = units * (32 + productIndex * 18);
+      const adSpend = revenue * (0.08 + (i % 5) * 0.035);
+      const clicks = Math.round(adSpend / (0.7 + (i % 4) * 0.4));
+      rows.push({
+        date: dateBefore(DATA_END, offset),
+        country: STORES[i % 3].country,
+        shop: STORES[i % 3].name,
+        category1: productIndex < 3 ? '户外花园' : '家居家具',
+        category2: productIndex < 3 ? '庭院设施' : '休闲家具',
+        category3: products[productIndex],
+        sku: `DEMO-${String(i + 1).padStart(3, '0')}`,
+        asin: `B0DEMO${String(i + 1).padStart(4, '0')}`,
+        revenue, units, adSpend, clicks,
+        impressions: clicks * (100 + i * 20),
+        adRevenue: revenue * (0.3 + (i % 4) * 0.08),
+        adOrders: Math.round(clicks * 0.08),
+        desktopVisits: units * 4,
+        mobileVisits: units * 9,
+        refunds: Math.round(units * (i % 4) * 0.024),
+        target: revenue * (0.85 + (i % 5) * 0.12),
+      });
+    }
+  }
+  return rows;
+}
+
+
+// core.js
+
+const FIELDS = ['revenue', 'units', 'adSpend', 'clicks', 'impressions', 'adRevenue', 'adOrders', 'desktopVisits', 'mobileVisits', 'refunds', 'target'];
+const DEFAULT_FILTERS = { days: '30', country: 'all', shop: 'all', category: 'all', role: 'director' };
+const DEFAULT_THRESHOLDS = { 达成率: 90, ACOS: 30, 退款率: 5, CTR: 0.3, CPC: 2, 推广占比: 18, 净销售额: 500, 销量: 5, 访客: 50, 展现: 1000, 花费: 300, 点击: 10 };
+const MAX_RULES = new Set(['ACOS', '退款率', 'CPC', '推广占比', '花费']);
+const PERCENT_METRICS = new Set(['推广占比', '退款率', 'CTR', 'CVR', 'ACOS', '达成率']);
+const MONEY_METRICS = new Set(['净销售额', '花费', 'CPC', '目标']);
+const divide = (numerator, denominator, multiplier = 1) => denominator > 0 ? numerator / denominator * multiplier : null;
+
+function aggregate(rows) {
+  return rows.reduce((result, row) => {
+    for (const field of FIELDS) result[field] += row[field] ?? 0;
+    return result;
+  }, Object.fromEntries(FIELDS.map(field => [field, 0])));
+}
+
+function metrics(row) {
+  return {
+    净销售额: row.revenue, 销量: row.units,
+    推广占比: divide(row.adSpend, row.revenue, 100),
+    退款率: divide(row.refunds, row.units, 100),
+    电脑端访客: row.desktopVisits, 手机端访客: row.mobileVisits,
+    访客总计: row.desktopVisits + row.mobileVisits,
+    广告展现: row.impressions, 点击: row.clicks, 花费: row.adSpend,
+    CTR: divide(row.clicks, row.impressions, 100),
+    CVR: divide(row.adOrders, row.clicks, 100),
+    CPC: divide(row.adSpend, row.clicks),
+    ACOS: divide(row.adSpend, row.adRevenue, 100),
+    目标: row.target, 达成率: divide(row.revenue, row.target, 100),
+  };
+}
+
+function formatMetric(key, value) {
+  if (!Number.isFinite(value)) return '—';
+  return `${MONEY_METRICS.has(key) ? '$' : ''}${value.toLocaleString('en-US', {
+    maximumFractionDigits: PERCENT_METRICS.has(key) || key === 'CPC' ? 2 : 0,
+  })}${PERCENT_METRICS.has(key) ? '%' : ''}`;
+}
+
+function periodFor(filters, endDate = DATA_END) {
+  const days = filters.days === 'month' ? Number(endDate.slice(-2)) : Number(filters.days);
+  return { start: dateBefore(endDate, days - 1), end: endDate, days };
+}
+
+// 角色限制必须在数据筛选中生效，不能只依赖下拉框的禁用状态。
+// 这里只提供前端角色预览；生产环境仍须由服务端鉴权。
+function filterRows(rows, filters, endDate = DATA_END) {
+  const period = periodFor(filters, endDate);
+  return rows.filter(row => row.date >= period.start && row.date <= period.end
+    && (filters.role === 'director' || row.country === '美国')
+    && (filters.role !== 'manager' || row.shop === '北美旗舰店')
+    && (filters.country === 'all' || row.country === filters.country)
+    && (filters.shop === 'all' || row.shop === filters.shop)
+    && (filters.category === 'all' || row.category1 === filters.category));
+}
+
+function groupRows(rows, key) {
+  const groups = new Map();
+  for (const row of rows) {
+    const name = row[key];
+    if (!groups.has(name)) groups.set(name, []);
+    groups.get(name).push(row);
+  }
+  return [...groups].map(([name, raw]) => ({ name, ...aggregate(raw), raw }));
+}
+
+function validateThresholds(input) {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return null;
+  const result = {};
+  for (const key of Object.keys(DEFAULT_THRESHOLDS)) {
+    const value = input[key];
+    if (value === '' || value === null || typeof value === 'boolean' || !Number.isFinite(Number(value)) || Number(value) < 0) return null;
+    result[key] = Number(value);
+  }
+  return result;
+}
+
+function flags(row, thresholds) {
+  const values = metrics(row);
+  return Object.entries(thresholds).filter(([key, threshold]) => {
+    const value = values[key === '访客' ? '访客总计' : key === '展现' ? '广告展现' : key];
+    if (!Number.isFinite(value)) return false;
+    return MAX_RULES.has(key) ? value > threshold : value < threshold;
+  }).map(([key]) => key);
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+}
+
+function csvCell(value) {
+  let text = String(value ?? '');
+  // 导出维度文本时，阻止电子表格将其作为公式执行。
+  if (/^[\s]*[=+\-@]/.test(text)) text = `'${text}`;
+  return `"${text.replaceAll('"', '""')}"`;
+}
+
+function toCsv(rows) {
+  return '\uFEFF' + rows.map(row => row.map(csvCell).join(',')).join('\r\n');
+}
+
+
+// storage.js
+
+function readSetting(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key)) ?? fallback; }
+  catch { return fallback; }
+}
+function writeSetting(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+  catch { return false; }
+}
+function loadThresholds() {
+  return validateThresholds(readSetting('amz-threshold', null)) ?? { ...DEFAULT_THRESHOLDS };
+}
+
+function loadFrequency() {
+  const value = readSetting('amz-frequency', null);
+  if (value === 'daily' || value === 'weekly') return value;
+  // 保留从原单文件版本迁移过来的更新频率。
+  try { return localStorage.getItem('demo-frequency') === '每周' ? 'weekly' : 'daily'; }
+  catch { return 'daily'; }
+}
+
+
+// views.js
+const fmt = formatMetric;
+const esc = escapeHtml;
+
+const PAGES = ['业绩总览', '业绩详情', '广告构成', '单品明细', 'AI基础分析', '数据源设置', '权限设置'];
+const DETAIL_KEYS = ['净销售额', '销量', '访客总计', '花费', '广告展现', '点击', 'CTR', 'CVR', 'CPC', 'ACOS', '目标', '达成率'];
+const PRODUCT_KEYS = ['净销售额', '销量', '访客总计', '退款率', '推广占比', '广告展现', '点击', '花费', 'CTR', 'CVR', 'CPC', 'ACOS', '目标', '达成率'];
+const AD_TYPES = [
+  { name: 'SP', label: '商品推广', share: 0.58, color: '#367db1' },
+  { name: 'SB', label: '品牌推广', share: 0.18, color: '#eea039' },
+  { name: 'SD', label: '展示型推广', share: 0.14, color: '#54a4a5' },
+  { name: 'SBV', label: '品牌视频广告', share: 0.1, color: '#919bb6' },
+];
+function dimensionKey(state) {
+  return state.dimension === '国家' ? 'country' : state.dimension === '店铺' ? 'shop' : `category${state.level}`;
+}
+function matchingProducts(rows, query) {
+  const needle = query.trim().toLowerCase();
+  return groupRows(rows, 'sku').filter(row => `${row.name} ${row.raw[0].asin} ${row.raw[0].category3}`.toLowerCase().includes(needle));
+}
+function table(rows, keys, thresholds, detail = false) {
+  return `<div class="scroll" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th scope="col">维度 / 产品</th>${keys.map(key => `<th scope="col">${esc(key)}</th>`).join('')}${detail ? '<th scope="col">异常判断</th>' : ''}</tr></thead><tbody>${rows.length ? rows.map(row => {
+    const values = metrics(row);
+    const problems = detail ? flags(row, thresholds) : [];
+    return `<tr><th scope="row">${esc(row.name)}${detail ? `<small>${esc(row.raw[0].category3)}<br>${esc(row.raw[0].asin)} · ${esc(row.raw[0].shop)}</small>` : ''}</th>${keys.map(key => `<td>${fmt(key, values[key])}</td>`).join('')}${detail ? `<td class="flag-cell">${problems.length ? problems.map(key => `<span class="tag red">${esc(key)}</span>`).join('') : '<span class="tag green">正常</span>'}</td>` : ''}</tr>`;
+  }).join('') : `<tr><td colspan="${keys.length + (detail ? 2 : 1)}" class="empty">没有匹配的产品，请调整搜索条件。</td></tr>`}</tbody></table></div>`;
+}
+
+function trend(rows, period) {
+  const totals = new Map(groupRows(rows, 'date').map(row => [row.name, row.revenue]));
+  const values = Array.from({ length: period.days }, (_, index) => {
+    const date = dateBefore(period.end, period.days - 1 - index);
+    return { date, value: totals.get(date) ?? 0 };
+  });
+  const max = Math.max(...values.map(row => row.value), 1);
+  const points = values.map((row, index) => `${60 + index * 620 / Math.max(values.length - 1, 1)},${180 - row.value / max * 145}`);
+  return `<svg class="trend" viewBox="0 0 710 220" role="img" aria-label="${esc(period.start)} 至 ${esc(period.end)} 的每日净销售额趋势"><defs><linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#367db1" stop-opacity="0.2"/><stop offset="100%" stop-color="#367db1" stop-opacity="0"/></linearGradient></defs>${[0, 0.5, 1].map(ratio => `<line x1="60" y1="${180 - ratio * 145}" x2="680" y2="${180 - ratio * 145}" stroke="#e7edf4"/><text x="48" y="${184 - ratio * 145}" text-anchor="end">${Math.round(max * ratio / 1000)}k</text>`).join('')}<polygon points="60,180 ${points.join(' ')} 680,180" fill="url(#chart-fill)"/><polyline fill="none" stroke="#367db1" stroke-width="3" stroke-linejoin="round" points="${points.join(' ')}"/>${values.map((row, index) => `<circle cx="${60 + index * 620 / Math.max(values.length - 1, 1)}" cy="${180 - row.value / max * 145}" r="3" fill="#367db1"><title>${row.date}：${fmt('净销售额', row.value)}</title></circle>`).join('')}<text x="60" y="210">${period.start.slice(5)}</text><text x="680" y="210" text-anchor="end">${period.end.slice(5)}</text></svg>`;
+}
+
+function overview(rows, period) {
+  const total = aggregate(rows);
+  const values = metrics(total);
+  const cards = Object.entries(values).filter(([key]) => !['达成率', '目标'].includes(key));
+  return `<div class="cards">${cards.map(([key, value], index) => `<section class="card ${index === 0 ? 'featured' : ''}"><span class="metric-label">${esc(key)}</span><strong>${fmt(key, value)}</strong><small>所选期间 · 模拟数据</small></section>`).join('')}</div><div class="split"><section class="panel"><div class="panel-heading"><h2>净销售额趋势</h2><span class="muted">USD · 按日</span></div>${trend(rows, period)}<p class="muted">按日期从早到晚展示；悬停数据点查看当日销售额。</p><details><summary>查看每日销售数据</summary>${table(groupRows(rows, 'date').sort((a, b) => a.name.localeCompare(b.name)), ['净销售额', '销量'])}</details></section><section class="panel goal"><h2>经营目标进度</h2><strong class="goal-value">${fmt('达成率', values.达成率)}</strong><div class="bar" role="img" aria-label="目标达成率 ${fmt('达成率', values.达成率)}"><i style="width:${Math.min(values.达成率 ?? 0, 100)}%"></i></div><p>期间目标 <b>${fmt('目标', total.target)}</b></p><p class="muted">实际净销售额 / 所选期间经营目标</p><button class="primary" data-action="diagnose">查看异常诊断 →</button></section></div>`;
+}
+
+function details(rows, state) {
+  return `<section class="panel"><div class="panel-heading wrap"><h2>业绩维度分析</h2><div class="inline-controls"><div class="segmented" aria-label="统计维度">${['国家', '店铺', '品类'].map(value => `<button data-dimension="${value}" aria-pressed="${state.dimension === value}" class="${state.dimension === value ? 'selected' : ''}">${value}</button>`).join('')}</div><label>分类层级<select id="level">${[1, 2, 3].map(value => `<option value="${value}" ${state.level === value ? 'selected' : ''}>${value}级分类</option>`).join('')}</select></label></div></div>${table(groupRows(rows, dimensionKey(state)), DETAIL_KEYS)}</section>`;
+}
+
+function ads(rows) {
+  const total = aggregate(rows);
+  return `<section class="panel"><div class="panel-heading"><h2>广告投入结构</h2><strong>${fmt('花费', total.adSpend)}</strong></div><p class="muted">按固定模拟比例拆分，各类型花费之和与总览一致。</p><div class="ad-stack" role="img" aria-label="SP 58%，SB 18%，SD 14%，SBV 10%">${AD_TYPES.map(type => `<span style="width:${type.share * 100}%;background:${type.color}">${type.name}</span>`).join('')}</div>${AD_TYPES.map(type => `<div class="ad-row"><div><b>${type.name}</b><small>${type.label}</small></div><div class="bar"><i style="width:${type.share * 100}%;background:${type.color}"></i></div><strong>${fmt('花费', total.adSpend * type.share)}</strong><span class="muted">${Math.round(type.share * 100)}%</span></div>`).join('')}</section>`;
+}
+
+function analysis(rows, state) {
+  const groups = groupRows(rows, 'sku');
+  const bad = groups.filter(row => flags(row, state.thresholds).length);
+  return `<section class="panel"><h2>诊断标准 · 可配置</h2><p class="muted">按当前筛选期间的累计值判断。金额单位 USD，比例单位 %；规则边界值本身视为达标。</p><form id="threshold-form"><div class="threshold-grid">${Object.entries(state.thresholds).map(([key, value]) => `<label>${esc(key)}<span class="muted">${MAX_RULES.has(key) ? '最高值' : '最低值'}</span><input name="${esc(key)}" type="number" min="0" step="any" required value="${value}"></label>`).join('')}</div><div class="form-actions"><button type="submit" class="primary">应用标准并生成诊断</button><button type="button" data-action="reset-thresholds">恢复默认标准</button></div></form></section><section class="panel"><div class="panel-heading"><h2>基础诊断摘要</h2><span class="tag red">${bad.length} 个产品触发规则</span></div><div class="note">发现 ${bad.length} / ${groups.length} 个产品触发规则。摘要由本地规则生成，原因需人工核实，不调用外部 AI。</div><div class="category-summary">${groupRows(rows, `category${state.level}`).map(row => `<p><b>${esc(row.name)}</b><span>${esc(flags(row, state.thresholds).join('、') || '全部达标')}</span></p>`).join('')}</div>${bad.length ? bad.map(row => `<article class="diagnosis"><div class="panel-heading"><h3>${esc(row.name)} <span class="muted">${esc(row.raw[0].category3)}</span></h3><span class="muted">${esc(row.raw[0].shop)}</span></div><p class="red">触发：${esc(flags(row, state.thresholds).join('、'))}</p><p>期间净销售额 ${fmt('净销售额', row.revenue)}，目标达成 ${fmt('达成率', metrics(row).达成率)}，ACOS ${fmt('ACOS', metrics(row).ACOS)}。</p><p class="muted">建议：核对预算和搜索词质量，检查价格、评价与商品页面转化；核实数据与归因后再调整投放。</p></article>`).join('') : '<div class="empty green">当前筛选范围内的产品均未触发已配置规则。</div>'}</section><div class="note">报告更新预览：每周一 09:00（北京时间）。此项目没有后台调度，报告随筛选和标准即时重算。</div>`;
+}
+
+function sources(state) {
+  return `<section class="panel"><h2>数据源设置</h2><div class="note">当前使用内置虚构数据。尚未连接真实亚马逊账户，也不会收集密钥。</div><div class="source-grid">${['销售与退款报表', '访客与流量报表', '广告报表', '经营目标'].map((name, index) => `<article class="source-card"><span class="source-icon">0${index + 1}</span><h3>${name}</h3><span class="green">● 内置模拟数据已就绪</span></article>`).join('')}</div><form id="frequency-form"><div class="inline-controls"><label>展示更新频率<select name="frequency"><option value="daily" ${state.frequency === 'daily' ? 'selected' : ''}>每日</option><option value="weekly" ${state.frequency === 'weekly' ? 'selected' : ''}>每周</option></select></label><button type="submit">保存演示设置</button></div><p class="muted">此设置仅保存在当前浏览器，不会触发实际同步。</p></form></section>`;
+}
+
+function permissions() {
+  return `<section class="panel"><h2>权限设置 · 角色预览</h2><div class="note">顶部“查看身份”只用于前端角色演示，不能代替真实身份认证和服务端访问控制。</div><div class="scroll"><table><thead><tr><th scope="col">角色</th><th scope="col">数据范围</th><th scope="col">能力预览</th></tr></thead><tbody><tr><th scope="row">总监</th><td>全部国家与店铺</td><td>经营查看、规则配置</td></tr><tr><th scope="row">副总监</th><td>美国业务</td><td>所辖业务分析、规则配置预览</td></tr><tr><th scope="row">店长</th><td>北美旗舰店</td><td>所辖单品查看、规则配置预览</td></tr></tbody></table></div><p class="muted">演示仅限制数据展示范围，各角色均可试用配置页面。真实授权需要在后端实现。</p></section>`;
+}
+
+function renderPage(rows, state, period) {
+  if (!rows.length && state.page < 5) return '<section class="panel empty"><h2>当前筛选没有数据</h2><p>请调整国家、店铺或品类后重试。</p><button data-action="reset-filters">重置筛选</button></section>';
+  switch (state.page) {
+    case 0: return overview(rows, period);
+    case 1: return details(rows, state);
+    case 2: return ads(rows);
+    case 3: return `<section class="panel"><div class="panel-heading wrap"><h2>SKU / ASIN 异常监控</h2><label class="search-label">搜索<input id="search" type="search" placeholder="SKU、ASIN 或商品名" value="${esc(state.query)}" autocomplete="off"></label></div><p class="muted">${groupRows(rows, 'sku').length} 个产品 · 按当前筛选期间累计，异常沿用诊断标准</p><div id="products">${table(matchingProducts(rows, state.query), PRODUCT_KEYS, state.thresholds, true)}</div></section>`;
+    case 4: return analysis(rows, state);
+    case 5: return sources(state);
+    case 6: return permissions();
+    default: return overview(rows, period);
+  }
+}
+
+
+// main.js
+
+
+
+
+const $ = id => document.getElementById(id);
+const rows = createMockRows();
+const state = { page: 0, dimension: '国家', level: 1, query: '', filters: { ...DEFAULT_FILTERS }, thresholds: loadThresholds(), frequency: loadFrequency() };
+let toastTimer;
+function toast(message) {
+  clearTimeout(toastTimer);
+  $('toast').textContent = message;
+  $('toast').hidden = false;
+  toastTimer = setTimeout(() => { $('toast').hidden = true; }, 4000);
+}
+function refreshFilters() {
+  const filter = state.filters;
+  if (filter.role !== 'director') filter.country = '美国';
+  if (filter.role === 'manager') filter.shop = '北美旗舰店';
+  const stores = STORES.filter(store => filter.country === 'all' || store.country === filter.country);
+  if (filter.shop !== 'all' && !stores.some(store => store.name === filter.shop)) filter.shop = 'all';
+  $('country').replaceChildren(...[{ value: 'all', label: '全部国家' }, ...STORES.map(store => ({ value: store.country, label: store.country }))].map(item => new Option(item.label, item.value)));
+  $('shop').replaceChildren(new Option('全部店铺', 'all'), ...stores.map(store => new Option(store.name, store.name)));
+  for (const key of Object.keys(DEFAULT_FILTERS)) $(key).value = filter[key];
+  $('country').disabled = filter.role !== 'director';
+  $('shop').disabled = filter.role === 'manager';
+}
+function render() {
+  refreshFilters();
+  const filtered = filterRows(rows, state.filters);
+  const period = periodFor(state.filters);
+  $('title').textContent = PAGES[state.page];
+  $('crumb').textContent = PAGES[state.page];
+  $('period').textContent = `${period.start} — ${period.end} · ${period.days} 天 · USD`;
+  $('nav').innerHTML = PAGES.map((page, index) => `<button type="button" data-page="${index}" ${state.page === index ? 'class="active" aria-current="page"' : ''}><span class="nav-index">0${index + 1}</span>${page}</button>`).join('');
+  $('content').innerHTML = renderPage(filtered, state, period);
+  $('export').hidden = state.page > 4;
+  $('export').disabled = !filtered.length;
+}
+function resetFilters() {
+  // 保留当前预览角色；重置不会扩大店长或副总监的数据范围。
+  state.filters = { ...DEFAULT_FILTERS, role: state.filters.role };
+  state.query = '';
+  render();
+}
+for (const key of Object.keys(DEFAULT_FILTERS)) {
+  $(key).addEventListener('change', event => {
+    state.filters[key] = event.target.value;
+    if (key === 'role') {
+      state.filters.country = state.filters.role === 'director' ? 'all' : '美国';
+      state.filters.shop = state.filters.role === 'manager' ? '北美旗舰店' : 'all';
+    }
+    render();
+  });
+}
+$('reset-filters').addEventListener('click', resetFilters);
+$('nav').addEventListener('click', event => {
+  const button = event.target.closest('[data-page]');
+  if (!button) return;
+  state.page = Number(button.dataset.page);
+  render();
+  $('title').setAttribute('tabindex', '-1');
+  $('title').focus({ preventScroll: true });
+  window.scrollTo({ top: 0, behavior: 'instant' });
+});
+$('content').addEventListener('click', event => {
+  const action = event.target.closest('[data-action]')?.dataset.action;
+  if (action === 'diagnose') { state.page = 4; render(); }
+  if (action === 'reset-filters') resetFilters();
+  if (action === 'reset-thresholds') {
+    state.thresholds = { ...DEFAULT_THRESHOLDS };
+    const saved = writeSetting('amz-threshold', state.thresholds);
+    render();
+    toast(saved ? '已恢复并保存默认标准' : '已恢复默认标准；浏览器不允许保存，仅本次有效');
+  }
+  const dimension = event.target.closest('[data-dimension]')?.dataset.dimension;
+  if (dimension) { state.dimension = dimension; render(); }
+});
+$('content').addEventListener('change', event => {
+  if (event.target.id === 'level') { state.level = Number(event.target.value); render(); }
+});
+$('content').addEventListener('input', event => {
+  if (event.target.id !== 'search') return;
+  state.query = event.target.value;
+  $('products').innerHTML = table(matchingProducts(filterRows(rows, state.filters), state.query), PRODUCT_KEYS, state.thresholds, true);
+});
+$('content').addEventListener('submit', event => {
+  event.preventDefault();
+  if (event.target.id === 'threshold-form') {
+    const values = validateThresholds(Object.fromEntries(new FormData(event.target)));
+    if (!values) { toast('请输入完整、有效且不小于 0 的标准'); return; }
+    state.thresholds = values;
+    const saved = writeSetting('amz-threshold', values);
+    render();
+    toast(saved ? '诊断标准已保存，报告已更新' : '报告已更新；浏览器不允许保存，仅本次有效');
+  }
+  if (event.target.id === 'frequency-form') {
+    state.frequency = new FormData(event.target).get('frequency');
+    toast(writeSetting('amz-frequency', state.frequency) ? '演示设置已保存，不会触发实际同步' : '浏览器不允许保存，此设置仅本次有效');
+  }
+});
+
+function exportCsv() {
+  const filtered = filterRows(rows, state.filters);
+  if (!filtered.length) return;
+  let header, body;
+  if (state.page === 2) {
+    header = ['广告类型', '类型说明', '花费 USD', '占比 %'];
+    body = AD_TYPES.map(type => [type.name, type.label, aggregate(filtered).adSpend * type.share, type.share * 100]);
+  } else {
+    const detail = state.page !== 1;
+    const keys = detail ? PRODUCT_KEYS : DETAIL_KEYS;
+    let groups = detail ? matchingProducts(filtered, state.page === 3 ? state.query : '') : groupRows(filtered, dimensionKey(state));
+    if (state.page === 4) groups = groups.filter(row => flags(row, state.thresholds).length);
+    header = ['维度', ...(detail ? ['商品名', 'ASIN', '店铺'] : []), ...keys, ...(detail ? ['异常判断'] : [])];
+    body = groups.map(row => [row.name, ...(detail ? [row.raw[0].category3, row.raw[0].asin, row.raw[0].shop] : []), ...keys.map(key => metrics(row)[key]), ...(detail ? [flags(row, state.thresholds).join('、') || '正常'] : [])]);
+  }
+  const period = periodFor(state.filters);
+  const scope = [`日期=${period.start}至${DATA_END}`, `国家=${state.filters.country}`, `店铺=${state.filters.shop}`, `品类=${state.filters.category}`, `身份=${state.filters.role}`, '全部为虚构模拟数据；金额 USD；比例单位 %'];
+  const blob = new Blob([toCsv([scope, header, ...body])], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = `亚马逊看板-${PAGES[state.page]}-${period.start}-${period.end}.csv`;
+  anchor.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  toast('CSV 已导出，金额为 USD，比例为百分数');
+}
+$('export').addEventListener('click', exportCsv);
+render();
+
+});
+</script>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">跳到看板内容</a>
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">▦</span><div>AMAZON<small>经营驾驶舱</small></div></div>
+      <p class="sidebar-caption">团队销售分析 · DEMO V1</p>
+      <nav id="nav" aria-label="主要导航"></nav>
+      <div class="sidebar-footer"><span class="status-dot"></span> 演示环境<small>数据截止 2026.11.10</small></div>
+    </aside>
+    <main>
+      <header class="top">
+        <div><p class="breadcrumb">团队经营 / <span id="crumb">业绩总览</span></p><h1 id="title">业绩总览</h1><p class="subtitle" id="period"></p></div>
+        <div class="top-actions"><span class="badge">● 虚构模拟数据</span><button id="export" type="button">↓ 导出 CSV</button></div>
+      </header>
+      <section class="filters" aria-label="数据筛选">
+        <label>时间<select id="days"><option value="7">最近7天</option><option value="30" selected>最近30天</option><option value="month">本月累计</option></select></label>
+        <label>国家<select id="country"></select></label>
+        <label>店铺<select id="shop"></select></label>
+        <label>品类<select id="category"><option value="all">全部品类</option><option>户外花园</option><option>家居家具</option></select></label>
+        <label>查看身份<select id="role"><option value="director">总监</option><option value="deputy">副总监</option><option value="manager">店长</option></select></label>
+        <button id="reset-filters" class="text-button" type="button">重置筛选</button>
+      </section>
+      <div id="content"></div>
+      <footer class="footnote">统一折算 USD；推广占比 = 广告花费 / 净销售额；ACOS = 花费 / 广告归因销售额。访客为设备访次加总，非跨设备去重人数。广告统一模拟 7 日归因。</footer>
+    </main>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <noscript>请启用 JavaScript 后使用此看板。</noscript>
+  </body>
+</html>
