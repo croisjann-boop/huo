@@ -20,9 +20,9 @@
     <main>
       <header class="top">
         <div><p class="breadcrumb">团队经营 / <span id="crumb">业绩总览</span></p><h1 id="title">业绩总览</h1><p class="subtitle" id="period"></p></div>
-        <div class="top-actions"><span class="badge">● 虚构模拟数据</span><button id="export" type="button">↓ 导出 CSV</button></div>
+        <div class="top-actions"><span class="badge" id="data-badge">● 虚构模拟数据</span><button id="export" type="button">↓ 导出 CSV</button></div>
       </header>
-      <section class="filters" aria-label="数据筛选">
+      <section class="filters" id="sales-filters" aria-label="数据筛选">
         <label>时间<select id="days"><option value="7">最近7天</option><option value="30" selected>最近30天</option><option value="month">本月累计</option></select></label>
         <label>国家<select id="country"></select></label>
         <label>店铺<select id="shop"></select></label>
@@ -31,7 +31,7 @@
         <button id="reset-filters" class="text-button" type="button">重置筛选</button>
       </section>
       <div id="content"></div>
-      <footer class="footnote">统一折算 USD；推广占比 = 广告花费 / 净销售额；ACOS = 花费 / 广告归因销售额。访客为设备访次加总，非跨设备去重人数。广告统一模拟 7 日归因。</footer>
+      <footer class="footnote" id="sales-footnote">统一折算 USD；推广占比 = 广告花费 / 净销售额；ACOS = 花费 / 广告归因销售额。访客为设备访次加总，非跨设备去重人数。广告统一模拟 7 日归因。</footer>
     </main>
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
     <noscript>请启用 JavaScript 后使用此看板。</noscript>
