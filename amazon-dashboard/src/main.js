@@ -1,11 +1,17 @@
-import { DATA_END, STORES, createMockRows } from './mock-data.js';
-import { DEFAULT_FILTERS, DEFAULT_THRESHOLDS, aggregate, filterRows, periodFor, metrics, groupRows, flags, toCsv, validateThresholds } from './core.js';
+import { DATA_END, STORES, createMockRows, createMockTargetPlan } from './mock-data.js';
+import { DEFAULT_FILTERS, DEFAULT_THRESHOLDS, aggregate, filterRows, filterScopeRows, periodFor, metrics, groupRows, flags, toCsv, validateThresholds } from './core.js';
 import { PAGES, DETAIL_KEYS, PRODUCT_KEYS, AD_TYPES, dimensionKey, matchingProducts, renderPage, table } from './views.js';
-import { loadThresholds, loadFrequency, writeSetting } from './storage.js';
+import { loadThresholds, loadFrequency, readSetting, writeSetting } from './storage.js';
+import { DEFAULT_KNOWLEDGE_FILTERS, KNOWLEDGE_COLUMNS, KNOWLEDGE_STRATEGIES, filterKnowledgeStrategies, renderKnowledgeResults } from './knowledge.js';
+import { KNOWLEDGE_DATA } from './knowledge-data.js';
+import { createSkuModels, normalizeSkuSettings, validSkuCycle, validateSkuRule, evaluateSkuWarning, visibleSkuModels, SKU_LIGHT_LABELS } from './sku-alerts.js';
+import { renderSkuSummary, renderSkuResults, renderSkuRuleDialog, renderSkuRulePreview } from './sku-view.js';
 
 const $ = id => document.getElementById(id);
 const rows = createMockRows();
-const state = { page: 0, dimension: '国家', level: 1, query: '', filters: { ...DEFAULT_FILTERS }, thresholds: loadThresholds(), frequency: loadFrequency() };
+const skuTargetPlan = createMockTargetPlan();
+const savedSkuSettings = normalizeSkuSettings(readSetting('amz-sku-warnings-v1', null));
+const state = { page: window.location.hash === '#advertising-knowledge' ? 7 : window.location.hash === '#sku-details' ? 3 : 0, dimension: '国家', level: 1, query: '', filters: { ...DEFAULT_FILTERS }, thresholds: loadThresholds(), frequency: loadFrequency(), knowledgeTab: 'strategies', knowledgeFilters: { ...DEFAULT_KNOWLEDGE_FILTERS }, skuCycle:savedSkuSettings.cycle,skuRules:savedSkuSettings.rules,skuModels:[],skuLight:'all' };
 let toastTimer;
 function toast(message) {
   clearTimeout(toastTimer);
@@ -31,16 +37,34 @@ function render() {
   const period = periodFor(state.filters);
   $('title').textContent = PAGES[state.page];
   $('crumb').textContent = PAGES[state.page];
-  $('period').textContent = `${period.start} — ${period.end} · ${period.days} 天 · USD`;
+  const isKnowledge = state.page === 7;
+  $('period').textContent = isKnowledge ? '投放策略、经营分类与 AMC 人群手册' : `${period.start} — ${period.end} · ${period.days} 天 · USD`;
+  $('sales-filters').hidden = isKnowledge;
+  $('sales-footnote').hidden = isKnowledge;
+  $('data-badge').textContent = isKnowledge ? 'Excel 广告知识库' : '● 虚构模拟数据';
   $('nav').innerHTML = PAGES.map((page, index) => `<button type="button" data-page="${index}" ${state.page === index ? 'class="active" aria-current="page"' : ''}><span class="nav-index">0${index + 1}</span>${page}</button>`).join('');
+  if (state.page === 3) refreshSkuModels();
   $('content').innerHTML = renderPage(filtered, state, period);
   $('export').hidden = state.page > 4;
-  $('export').disabled = !filtered.length;
+  $('export').disabled = state.page === 3 ? !visibleSkuModels(state.skuModels,state.query,state.skuLight).length : !filtered.length;
+}
+function refreshSkuModels() {
+  state.skuModels = createSkuModels(filterScopeRows(rows,state.filters),filterRows(rows,state.filters),state.skuCycle,state.skuRules,skuTargetPlan,DATA_END);
+}
+function refreshSkuDetails() {
+  refreshSkuModels();
+  $('sku-summary').innerHTML = renderSkuSummary(state);
+  $('products').innerHTML = renderSkuResults(state,PRODUCT_KEYS);
+  $('export').disabled = !visibleSkuModels(state.skuModels,state.query,state.skuLight).length;
+}
+function persistSkuSettings() {
+  return writeSetting('amz-sku-warnings-v1',{version:1,cycle:state.skuCycle,rules:state.skuRules});
 }
 function resetFilters() {
   // 保留当前预览角色；重置不会扩大店长或副总监的数据范围。
   state.filters = { ...DEFAULT_FILTERS, role: state.filters.role };
   state.query = '';
+  state.skuLight = 'all';
   render();
 }
 for (const key of Object.keys(DEFAULT_FILTERS)) {
@@ -58,13 +82,64 @@ $('nav').addEventListener('click', event => {
   const button = event.target.closest('[data-page]');
   if (!button) return;
   state.page = Number(button.dataset.page);
+  if (['#advertising-knowledge','#sku-details'].includes(window.location.hash) || [3,7].includes(state.page)) {
+    try { history.replaceState(null, '', state.page === 7 ? '#advertising-knowledge' : state.page === 3 ? '#sku-details' : window.location.pathname + window.location.search); } catch { /* 本地文件浏览器可能限制 history API。 */ }
+  }
   render();
   $('title').setAttribute('tabindex', '-1');
   $('title').focus({ preventScroll: true });
   window.scrollTo({ top: 0, behavior: 'instant' });
 });
 $('content').addEventListener('click', event => {
+  const skuLight = event.target.closest('[data-sku-light]')?.dataset.skuLight;
+  if (skuLight) { state.skuLight=skuLight; refreshSkuDetails(); return; }
+  const skuId = event.target.closest('[data-sku-rule]')?.dataset.skuRule;
+  if (skuId) {
+    const item=state.skuModels.find(model=>model.id===skuId);
+    if (item) { $('sku-rule-dialog').innerHTML=renderSkuRuleDialog(item); $('sku-rule-dialog').showModal(); }
+    return;
+  }
+  const knowledgeTab = event.target.closest('[data-knowledge-tab]')?.dataset.knowledgeTab;
+  if (knowledgeTab) { state.knowledgeTab = knowledgeTab; render(); return; }
+  const knowledgePage = event.target.closest('[data-knowledge-page]')?.dataset.knowledgePage;
+  if (knowledgePage) {
+    state.knowledgeFilters.page = Number(knowledgePage);
+    $('knowledge-results').innerHTML = renderKnowledgeResults(state.knowledgeFilters);
+    $('knowledge-results').scrollIntoView({ block: 'start' });
+    return;
+  }
+  const copyRow = event.target.closest('[data-copy-strategy]')?.dataset.copyStrategy;
+  if (copyRow) {
+    const strategy = KNOWLEDGE_STRATEGIES.find(row => row.row === Number(copyRow));
+    if (strategy) navigator.clipboard?.writeText(strategy.J).then(() => toast('广告组名已复制')).catch(() => toast('浏览器不允许复制，请选中广告组名手动复制'));
+    if (!navigator.clipboard) toast('浏览器不支持复制，请选中广告组名手动复制');
+    return;
+  }
+  const imageId = event.target.closest('[data-knowledge-image]')?.dataset.knowledgeImage;
+  if (imageId) {
+    const source = imageId === 'naming' ? KNOWLEDGE_DATA.namingImage : KNOWLEDGE_DATA.images[imageId];
+    if (source) {
+      $('knowledge-zoom-image').src = source;
+      $('knowledge-zoom-image').alt = event.target.closest('[data-knowledge-image]').querySelector('img').alt;
+      $('knowledge-image-dialog').showModal();
+    }
+    return;
+  }
   const action = event.target.closest('[data-action]')?.dataset.action;
+  if (action === 'close-sku-rule') { $('sku-rule-dialog').close(); return; }
+  if (action === 'reset-sku-rule') {
+    const item=state.skuModels.find(model=>model.id===$('sku-rule-form').dataset.skuId);
+    if (!item) return;
+    delete state.skuRules[item.ruleKey];
+    const saved=persistSkuSettings();
+    $('sku-rule-dialog').close();
+    render();
+    toast(saved?'已恢复该 SKU 当前周期的默认规则':'默认规则已恢复；浏览器不允许保存，仅本次有效');
+    return;
+  }
+  if (action === 'close-knowledge-image') { $('knowledge-image-dialog').close(); return; }
+  if (action === 'reset-knowledge') { state.knowledgeFilters = { ...DEFAULT_KNOWLEDGE_FILTERS }; render(); return; }
+  if (action === 'export-knowledge') { exportKnowledgeCsv(); return; }
   if (action === 'diagnose') { state.page = 4; render(); }
   if (action === 'reset-filters') resetFilters();
   if (action === 'reset-thresholds') {
@@ -77,15 +152,59 @@ $('content').addEventListener('click', event => {
   if (dimension) { state.dimension = dimension; render(); }
 });
 $('content').addEventListener('change', event => {
+  const filter = event.target.dataset.knowledgeFilter;
+  if (filter && Object.hasOwn(DEFAULT_KNOWLEDGE_FILTERS, filter)) {
+    state.knowledgeFilters[filter] = event.target.value;
+    state.knowledgeFilters.page = 1;
+    $('knowledge-results').innerHTML = renderKnowledgeResults(state.knowledgeFilters);
+    return;
+  }
   if (event.target.id === 'level') { state.level = Number(event.target.value); render(); }
 });
 $('content').addEventListener('input', event => {
+  const skuForm=event.target.closest('#sku-rule-form');
+  if (skuForm) {
+    const item=state.skuModels.find(model=>model.id===skuForm.dataset.skuId);
+    const rule=validateSkuRule(Object.fromEntries(new FormData(skuForm)));
+    $('sku-rule-error').hidden=true;
+    if (item && rule) {
+      const preview=evaluateSkuWarning({actual:item.actual,cycle:item.cycle,asOf:item.asOf,dataComplete:item.dataComplete,...rule});
+      $('sku-rule-preview').innerHTML=renderSkuRulePreview({...item,...rule,...preview});
+    } else $('sku-rule-preview').textContent='请输入正数目标，且绿灯下限必须高于黄灯下限。';
+    return;
+  }
+  if (event.target.id === 'knowledge-search') {
+    state.knowledgeFilters.query = event.target.value;
+    state.knowledgeFilters.page = 1;
+    $('knowledge-results').innerHTML = renderKnowledgeResults(state.knowledgeFilters);
+    return;
+  }
   if (event.target.id !== 'search') return;
   state.query = event.target.value;
-  $('products').innerHTML = table(matchingProducts(filterRows(rows, state.filters), state.query), PRODUCT_KEYS, state.thresholds, true);
+  refreshSkuDetails();
 });
 $('content').addEventListener('submit', event => {
   event.preventDefault();
+  if (event.target.id === 'sku-cycle-form') {
+    const cycle=Object.fromEntries(new FormData(event.target));
+    if (!validSkuCycle(cycle)) { toast('请输入有效周期，结束日期不能早于开始日期'); return; }
+    state.skuCycle={start:cycle.start,end:cycle.end};
+    const saved=persistSkuSettings();
+    render();
+    toast(saved?'预警周期已保存，所有 SKU 已重算':'预警周期已应用；浏览器不允许保存，仅本次有效');
+    return;
+  }
+  if (event.target.id === 'sku-rule-form') {
+    const item=state.skuModels.find(model=>model.id===event.target.dataset.skuId);
+    const rule=validateSkuRule(Object.fromEntries(new FormData(event.target)));
+    if (!item || !rule) { $('sku-rule-error').hidden=false; $('sku-rule-error').textContent='保存失败：目标必须大于 0，绿灯下限必须高于黄灯下限，且所有值必须有效。'; return; }
+    state.skuRules[item.ruleKey]=rule;
+    const saved=persistSkuSettings();
+    $('sku-rule-dialog').close();
+    render();
+    toast(saved?`${item.name} 当前周期规则已保存，预警已重算`:'预警已重算；浏览器不允许保存，仅本次有效');
+    return;
+  }
   if (event.target.id === 'threshold-form') {
     const values = validateThresholds(Object.fromEntries(new FormData(event.target)));
     if (!values) { toast('请输入完整、有效且不小于 0 的标准'); return; }
@@ -102,9 +221,15 @@ $('content').addEventListener('submit', event => {
 
 function exportCsv() {
   const filtered = filterRows(rows, state.filters);
-  if (!filtered.length) return;
+  if (!filtered.length && state.page !== 3) return;
   let header, body;
-  if (state.page === 2) {
+  if (state.page === 3) {
+    refreshSkuModels();
+    const items=visibleSkuModels(state.skuModels,state.query,state.skuLight);
+    if (!items.length) return;
+    header=['SKU','商品名','ASIN','店铺','预警灯色','判断说明','周期开始','周期结束','数据截止','周期已完成额 USD','整周期目标 USD','周期完成率 %','时间进度 %','进度达成比 %','已过天数','周期总天数','绿灯下限 %','黄灯下限 %','规则来源',...PRODUCT_KEYS];
+    body=items.map(item=>[item.name,item.product,item.asin,item.shop,SKU_LIGHT_LABELS[item.light],item.reason,item.cycle.start,item.cycle.end,item.asOf,item.actual,item.target,Number.isFinite(item.completion)?item.completion*100:null,item.progress*100,item.pace,item.elapsedDays,item.totalDays,item.greenMin,item.yellowMin,item.customRule?'该 SKU 自定义':'默认规则与模拟日目标计划',...PRODUCT_KEYS.map(key=>metrics(item.sales)[key])]);
+  } else if (state.page === 2) {
     header = ['广告类型', '类型说明', '花费 USD', '占比 %'];
     body = AD_TYPES.map(type => [type.name, type.label, aggregate(filtered).adSpend * type.share, type.share * 100]);
   } else {
@@ -117,6 +242,7 @@ function exportCsv() {
   }
   const period = periodFor(state.filters);
   const scope = [`日期=${period.start}至${DATA_END}`, `国家=${state.filters.country}`, `店铺=${state.filters.shop}`, `品类=${state.filters.category}`, `身份=${state.filters.role}`, '全部为虚构模拟数据；金额 USD；比例单位 %'];
+  if (state.page === 3) scope.push(`预警周期=${state.skuCycle.start}至${state.skuCycle.end}`,`预警灯色筛选=${state.skuLight}`,`搜索=${state.query}`);
   const blob = new Blob([toCsv([scope, header, ...body])], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
@@ -125,6 +251,23 @@ function exportCsv() {
   anchor.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
   toast('CSV 已导出，金额为 USD，比例为百分数');
+}
+
+function exportKnowledgeCsv() {
+  const strategies = filterKnowledgeStrategies(state.knowledgeFilters);
+  if (!strategies.length) return;
+  const matrix = [
+    ['来源文件', KNOWLEDGE_DATA.source.filename, '工作表', '群爆款列表'],
+    [...KNOWLEDGE_COLUMNS.map(([, title]) => title), '原表行号'],
+    ...strategies.map(row => [...KNOWLEDGE_COLUMNS.map(([key]) => row[key] ?? ''), row.row]),
+  ];
+  const url = URL.createObjectURL(new Blob([toCsv(matrix)], { type: 'text/csv;charset=utf-8' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `广告知识-投放策略-${strategies.length}条.csv`;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  toast(`已导出 ${strategies.length} 条策略，包含全部字段和原表行号`);
 }
 $('export').addEventListener('click', exportCsv);
 render();
