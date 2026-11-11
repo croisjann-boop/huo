@@ -47,8 +47,10 @@ export function periodFor(filters, endDate = DATA_END) {
 // 这里只提供前端角色预览；生产环境仍须由服务端鉴权。
 export function filterRows(rows, filters, endDate = DATA_END) {
   const period = periodFor(filters, endDate);
-  return rows.filter(row => row.date >= period.start && row.date <= period.end
-    && (filters.role === 'director' || row.country === '美国')
+  return filterScopeRows(rows, filters).filter(row => row.date >= period.start && row.date <= period.end);
+}
+export function filterScopeRows(rows, filters) {
+  return rows.filter(row => (filters.role === 'director' || row.country === '美国')
     && (filters.role !== 'manager' || row.shop === '北美旗舰店')
     && (filters.country === 'all' || row.country === filters.country)
     && (filters.shop === 'all' || row.shop === filters.shop)
