@@ -1,7 +1,10 @@
 import { aggregate, metrics, formatMetric as fmt, groupRows, flags, escapeHtml as esc, MAX_RULES } from './core.js';
 import { dateBefore } from './mock-data.js';
+import { renderKnowledgePage } from './knowledge.js';
+import { renderSkuPage } from './sku-view.js';
+import { createSkuModels, defaultSkuCycle } from './sku-alerts.js';
 
-export const PAGES = ['业绩总览', '业绩详情', '广告构成', '单品明细', 'AI基础分析', '数据源设置', '权限设置'];
+export const PAGES = ['业绩总览', '业绩详情', '广告构成', '单品明细', 'AI基础分析', '数据源设置', '权限设置', '广告知识'];
 export const DETAIL_KEYS = ['净销售额', '销量', '访客总计', '花费', '广告展现', '点击', 'CTR', 'CVR', 'CPC', 'ACOS', '目标', '达成率'];
 export const PRODUCT_KEYS = ['净销售额', '销量', '访客总计', '退款率', '推广占比', '广告展现', '点击', '花费', 'CTR', 'CVR', 'CPC', 'ACOS', '目标', '达成率'];
 export const AD_TYPES = [
@@ -39,7 +42,7 @@ function trend(rows, period) {
 function overview(rows, period) {
   const total = aggregate(rows);
   const values = metrics(total);
-  const cards = Object.entries(values).filter(([key]) => !['达成率', '目标'].includes(key));
+  const cards = Object.entries(values).filter(([key]) => !['达成率', '目标', '电脑端访客', '手机端访客'].includes(key));
   return `<div class="cards">${cards.map(([key, value], index) => `<section class="card ${index === 0 ? 'featured' : ''}"><span class="metric-label">${esc(key)}</span><strong>${fmt(key, value)}</strong><small>所选期间 · 模拟数据</small></section>`).join('')}</div><div class="split"><section class="panel"><div class="panel-heading"><h2>净销售额趋势</h2><span class="muted">USD · 按日</span></div>${trend(rows, period)}<p class="muted">按日期从早到晚展示；悬停数据点查看当日销售额。</p><details><summary>查看每日销售数据</summary>${table(groupRows(rows, 'date').sort((a, b) => a.name.localeCompare(b.name)), ['净销售额', '销量'])}</details></section><section class="panel goal"><h2>经营目标进度</h2><strong class="goal-value">${fmt('达成率', values.达成率)}</strong><div class="bar" role="img" aria-label="目标达成率 ${fmt('达成率', values.达成率)}"><i style="width:${Math.min(values.达成率 ?? 0, 100)}%"></i></div><p>期间目标 <b>${fmt('目标', total.target)}</b></p><p class="muted">实际净销售额 / 所选期间经营目标</p><button class="primary" data-action="diagnose">查看异常诊断 →</button></section></div>`;
 }
 
@@ -67,15 +70,16 @@ function permissions() {
 }
 
 export function renderPage(rows, state, period) {
-  if (!rows.length && state.page < 5) return '<section class="panel empty"><h2>当前筛选没有数据</h2><p>请调整国家、店铺或品类后重试。</p><button data-action="reset-filters">重置筛选</button></section>';
+  if (!rows.length && [0,1,2,4].includes(state.page)) return '<section class="panel empty"><h2>当前筛选没有数据</h2><p>请调整国家、店铺或品类后重试。</p><button data-action="reset-filters">重置筛选</button></section>';
   switch (state.page) {
     case 0: return overview(rows, period);
     case 1: return details(rows, state);
     case 2: return ads(rows);
-    case 3: return `<section class="panel"><div class="panel-heading wrap"><h2>SKU / ASIN 异常监控</h2><label class="search-label">搜索<input id="search" type="search" placeholder="SKU、ASIN 或商品名" value="${esc(state.query)}" autocomplete="off"></label></div><p class="muted">${groupRows(rows, 'sku').length} 个产品 · 按当前筛选期间累计，异常沿用诊断标准</p><div id="products">${table(matchingProducts(rows, state.query), PRODUCT_KEYS, state.thresholds, true)}</div></section>`;
+    case 3: return renderSkuPage({ ...state, skuModels: state.skuModels ?? createSkuModels(rows, rows, state.skuCycle ?? defaultSkuCycle(), state.skuRules) }, PRODUCT_KEYS);
     case 4: return analysis(rows, state);
     case 5: return sources(state);
     case 6: return permissions();
+    case 7: return renderKnowledgePage(state);
     default: return overview(rows, period);
   }
 }
