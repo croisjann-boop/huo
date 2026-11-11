@@ -43,3 +43,20 @@ export function createMockRows() {
   }
   return rows;
 }
+
+// 独立的演示日目标计划，包含本月尚未发生的日期；不生成未来销售额。
+export function createMockTargetPlan() {
+  const end = new Date(`${DATA_END}T00:00:00Z`);
+  end.setUTCMonth(end.getUTCMonth() + 1, 0);
+  const start = Date.parse(`${dateBefore(DATA_END, 29)}T00:00:00Z`);
+  const cutoff = Date.parse(`${DATA_END}T00:00:00Z`);
+  const result = [];
+  for (let time = start; time <= end.getTime(); time += 86400000) {
+    const offset = (cutoff - time) / 86400000;
+    for (let i = 0; i < 18; i += 1) {
+      const units = 12 + (((i * 17 + offset * 13) % 39 + 39) % 39);
+      result.push({date:new Date(time).toISOString().slice(0,10),sku:`DEMO-${String(i+1).padStart(3,'0')}`,shop:STORES[i%3].name,target:units*(32+(i%6)*18)*(0.85+(i%5)*0.12)});
+    }
+  }
+  return result;
+}
