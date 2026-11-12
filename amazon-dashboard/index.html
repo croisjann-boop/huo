@@ -39,7 +39,8 @@ main{margin-left:226px;padding:30px 34px;max-width:2000px}.top{display:flex;just
 
 .target-import-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.target-import-actions button{font-size:11px;padding:6px 10px;min-height:32px}.target-import-dialog{border:0;border-radius:12px;padding:24px;width:min(760px,calc(100vw - 28px));max-height:90vh;color:#344f69;box-shadow:0 18px 100px #10233d40}.target-import-dialog::backdrop{background:#112843aa}.target-import-dialog header{display:flex;justify-content:space-between;align-items:center}.target-import-dialog p{font-size:12px;line-height:1.8}.target-file-label{display:flex;flex-direction:column;gap:10px;margin:18px 0;font-size:12px}.target-import-dialog .scroll{max-height:280px}.target-import-dialog .form-actions{margin-top:18px}
 
-.detail-category-filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.detail-category-filters label{display:flex;align-items:center;gap:7px;font-size:12px;color:#718198}.detail-category-filters select{max-width:175px;font-size:12px}.detail-category-filters button{font-size:11px;padding:7px 10px}@media(max-width:600px){.detail-category-filters{width:100%}.detail-category-filters label{width:100%;justify-content:space-between}.detail-category-filters select{width:calc(100% - 70px);max-width:none}}
+
+.detail-dimensions{flex-wrap:wrap;gap:3px}.detail-dimensions button{white-space:nowrap}@media(max-width:600px){.detail-dimensions{width:100%}.detail-dimensions button{flex:1;padding:6px 9px}}
 
 </style>
     <script>
@@ -610,18 +611,12 @@ function overview(rows, period) {
   return `<div class="cards">${cards.map(([key, value], index) => `<section class="card ${index === 0 ? 'featured' : ''}"><span class="metric-label">${esc(key)}</span><strong>${fmt(key, value)}</strong><small>所选期间 · 模拟数据</small></section>`).join('')}</div><div class="split"><section class="panel"><div class="panel-heading"><h2>净销售额趋势</h2><span class="muted">USD · 按日</span></div>${trend(rows, period)}<p class="muted">按日期从早到晚展示；悬停数据点查看当日销售额。</p><details><summary>查看每日销售数据</summary>${table(groupRows(rows, 'date').sort((a, b) => a.name.localeCompare(b.name)), ['净销售额', '销量'])}</details></section><section class="panel goal"><h2>经营目标进度</h2>${targetImportControls()}<strong class="goal-value">${fmt('达成率', values.达成率)}</strong><div class="bar" role="img" aria-label="目标达成率 ${fmt('达成率', values.达成率)}"><i style="width:${Math.min(values.达成率 ?? 0, 100)}%"></i></div><p>期间目标 <b>${fmt('目标', total.target)}</b></p><p class="muted">实际净销售额 / 所选期间经营目标；导入周期目标按天分配后汇总</p><button class="primary" data-action="diagnose">查看异常诊断 →</button></section></div>`;
 }
 
-function detailCategoryRows(rows, state) {
-  const selected=state.detailCategories ?? ['all','all','all'];
-  return rows.filter(row=>selected.every((value,index)=>value==='all'||row[`category${index+1}`]===value));
-}
-function detailCategoryOptions(rows, selected, level) {
-  return [...new Set(rows.filter(row=>selected.slice(0,level-1).every((value,index)=>value==='all'||row[`category${index+1}`]===value)).map(row=>row[`category${level}`]))].sort((a,b)=>a.localeCompare(b,'zh-CN'));
-}
 function details(rows, state) {
-  const selected=state.detailCategories ?? ['all','all','all'];
-  const categoryControls=state.dimension==='品类' ? `<div class="detail-category-filters" role="group" aria-label="品类层级筛选">${[1,2,3].map(level=>`<label>${level}级分类<select data-detail-category="${level}" aria-label="${level}级分类"><option value="all">全部${level}级分类</option>${detailCategoryOptions(rows,selected,level).map(value=>`<option value="${esc(value)}" ${selected[level-1]===value?'selected':''}>${esc(value)}</option>`).join('')}</select></label>`).join('')}<button type="button" data-action="reset-detail-categories">重置分类</button></div>` : '';
-  const visible=state.dimension==='品类'?detailCategoryRows(rows,state):rows;
-  return `<section class="panel"><div class="panel-heading wrap"><h2>业绩维度分析</h2><div class="inline-controls"><div class="segmented" aria-label="统计维度">${['国家', '店铺', '品类'].map(value => `<button data-dimension="${value}" aria-pressed="${state.dimension === value}" class="${state.dimension === value ? 'selected' : ''}">${value}</button>`).join('')}</div>${categoryControls}<label>汇总层级<select id="level">${[1, 2, 3].map(value => `<option value="${value}" ${state.level === value ? 'selected' : ''}>${value}级分类</option>`).join('')}</select></label></div></div>${table(groupRows(visible, dimensionKey(state)), DETAIL_KEYS)}</section>`;
+  const dimensions=[{name:'国家'},{name:'店铺'},...[1,2,3].map(level=>({name:['一级品类','二级品类','三级品类'][level-1],level}))];
+  return `<section class="panel"><div class="panel-heading wrap"><h2>业绩维度分析</h2><div class="segmented detail-dimensions" aria-label="统计维度">${dimensions.map(item=>{
+    const selected=item.level?state.dimension==='品类'&&state.level===item.level:state.dimension===item.name;
+    return `<button type="button" data-dimension="${item.level?'品类':item.name}" ${item.level?`data-category-level="${item.level}"`:''} aria-pressed="${selected}" class="${selected?'selected':''}">${item.name}</button>`;
+  }).join('')}</div></div>${table(groupRows(rows, dimensionKey(state)), DETAIL_KEYS)}</section>`;
 }
 
 function ads(rows) {
@@ -671,14 +666,13 @@ function renderPage(rows, state, period) {
 
 
 
-
 const $ = id => document.getElementById(id);
 const rows = createMockRows();
 const skuTargetPlan = createMockTargetPlan();
 let targetRecords = [];
 try { const saved=readSetting('amz-target-import-v1',[]); if(Array.isArray(saved)&&saved.length){const csv=toCsv([['店铺','SKU','周期开始','周期结束','目标金额'],...saved.map(r=>[r.shop,r.sku,r.start,r.end,r.target])]);targetRecords=validateTargetCsv(csv,rows).records;} } catch { /* 忽略损坏的导入记录。 */ }
 const savedSkuSettings = normalizeSkuSettings(readSetting('amz-sku-warnings-v1', null));
-const state = { page: window.location.hash === '#advertising-knowledge' ? 7 : window.location.hash === '#sku-details' ? 3 : 0, dimension: '国家', level: 1, detailCategories:['all','all','all'], query: '', filters: { ...DEFAULT_FILTERS }, thresholds: loadThresholds(), frequency: loadFrequency(), knowledgeTab: 'strategies', knowledgeFilters: { ...DEFAULT_KNOWLEDGE_FILTERS }, skuCycle:savedSkuSettings.cycle,skuRules:savedSkuSettings.rules,skuModels:[],skuLight:'all' };
+const state = { page: window.location.hash === '#advertising-knowledge' ? 7 : window.location.hash === '#sku-details' ? 3 : 0, dimension: '国家', level: 1, query: '', filters: { ...DEFAULT_FILTERS }, thresholds: loadThresholds(), frequency: loadFrequency(), knowledgeTab: 'strategies', knowledgeFilters: { ...DEFAULT_KNOWLEDGE_FILTERS }, skuCycle:savedSkuSettings.cycle,skuRules:savedSkuSettings.rules,skuModels:[],skuLight:'all' };
 let toastTimer;
 function toast(message) {
   clearTimeout(toastTimer);
@@ -701,7 +695,6 @@ function refreshFilters() {
 function render() {
   refreshFilters();
   const filtered = filterRows(applyTargetRecords(rows,targetRecords), state.filters);
-  if(state.page===1){for(let level=1;level<=3;level++){if(state.detailCategories[level-1]!=='all'&&!detailCategoryOptions(filtered,state.detailCategories,level).includes(state.detailCategories[level-1]))state.detailCategories[level-1]='all';}}
   const period = periodFor(state.filters);
   $('title').textContent = PAGES[state.page];
   $('crumb').textContent = PAGES[state.page];
@@ -734,7 +727,6 @@ function resetFilters() {
   state.filters = { ...DEFAULT_FILTERS, role: state.filters.role };
   state.query = '';
   state.skuLight = 'all';
-  state.detailCategories=['all','all','all'];
   render();
 }
 for (const key of Object.keys(DEFAULT_FILTERS)) {
@@ -761,7 +753,6 @@ $('nav').addEventListener('click', event => {
   window.scrollTo({ top: 0, behavior: 'instant' });
 });
 $('content').addEventListener('click', event => {
-  if(event.target.closest('[data-action=reset-detail-categories]')){state.detailCategories=['all','all','all'];render();return;}
   const targetAction=event.target.closest('[data-action]')?.dataset.action;
   if(targetAction==='import-targets'){openTargetImport();return;}
   if(targetAction==='target-template'){downloadTargetTemplate();return;}
@@ -823,10 +814,9 @@ $('content').addEventListener('click', event => {
     toast(saved ? '已恢复并保存默认标准' : '已恢复默认标准；浏览器不允许保存，仅本次有效');
   }
   const dimension = event.target.closest('[data-dimension]')?.dataset.dimension;
-  if (dimension) { state.dimension = dimension; render(); }
+  if (dimension) { state.dimension = dimension; const level=event.target.closest('[data-category-level]')?.dataset.categoryLevel;if(level)state.level=Number(level);render(); }
 });
 $('content').addEventListener('change', event => {
-  if(event.target.dataset.detailCategory){const level=Number(event.target.dataset.detailCategory);state.detailCategories[level-1]=event.target.value;for(let i=level;i<3;i++)state.detailCategories[i]='all';state.level=Math.max(1,...state.detailCategories.map((v,i)=>v==='all'?0:i+1));render();return;}
   const filter = event.target.dataset.knowledgeFilter;
   if (filter && Object.hasOwn(DEFAULT_KNOWLEDGE_FILTERS, filter)) {
     state.knowledgeFilters[filter] = event.target.value;
@@ -896,7 +886,6 @@ $('content').addEventListener('submit', event => {
 
 function exportCsv() {
   let filtered = filterRows(applyTargetRecords(rows,targetRecords), state.filters);
-  if(state.page===1&&state.dimension==='品类')filtered=detailCategoryRows(filtered,state);
   if (!filtered.length && state.page !== 3) return;
   let header, body;
   if (state.page === 3) {
@@ -918,7 +907,6 @@ function exportCsv() {
   }
   const period = periodFor(state.filters);
   const scope = [`日期=${period.start}至${DATA_END}`, `国家=${state.filters.country}`, `店铺=${state.filters.shop}`, `品类=${state.filters.category}`, `身份=${state.filters.role}`, '全部为虚构模拟数据；金额 USD；比例单位 %'];
-  if(state.page===1&&state.dimension==='品类')scope.push(...state.detailCategories.map((value,index)=>`${index+1}级分类=${value}`));
   if (state.page === 3) scope.push(`预警周期=${state.skuCycle.start}至${state.skuCycle.end}`,`预警灯色筛选=${state.skuLight}`,`搜索=${state.query}`);
   const blob = new Blob([toCsv([scope, header, ...body])], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
