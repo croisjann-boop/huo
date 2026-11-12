@@ -23,12 +23,13 @@
         <div class="top-actions"><span class="badge" id="data-badge">● 虚构模拟数据</span><button id="export" type="button">↓ 导出 CSV</button></div>
       </header>
       <section class="filters" id="sales-filters" aria-label="数据筛选">
-        <label>时间<select id="days"><option value="7">最近7天</option><option value="30" selected>最近30天</option><option value="month">本月累计</option></select></label>
+        <label>时间<select id="days"><option value="7">最近7天</option><option value="30" selected>最近30天</option><option value="month">本月累计</option><option value="custom">自定义日期</option></select></label>
         <label>国家<select id="country"></select></label>
         <label>店铺<select id="shop"></select></label>
         <label>一级品类<select id="category"><option value="all">全部一级品类</option></select></label><label>二级品类<select id="category2"><option value="all">全部二级品类</option></select></label><label>三级品类<select id="category3"><option value="all">全部三级品类</option></select></label>
         <label>查看身份<select id="role"><option value="director">总监</option><option value="deputy">副总监</option><option value="manager">店长</option></select></label>
         <button id="reset-filters" class="text-button" type="button">重置筛选</button>
+        <form id="custom-date-form" class="custom-date-form" hidden><label>开始日期<input id="custom-start" type="date" required></label><label>结束日期<input id="custom-end" type="date" required></label><button type="submit">应用日期</button><span id="custom-date-error" role="alert" hidden>结束日期不能早于开始日期。</span></form>
       </section>
       <div id="content"></div>
       <footer class="footnote" id="sales-footnote">统一折算 USD；推广占比 = 广告花费 / 净销售额；ACOS = 花费 / 广告归因销售额。访客为设备访次加总，非跨设备去重人数。广告统一模拟 7 日归因。</footer>
