@@ -706,7 +706,7 @@ function refreshFilters() {
     if(filter[id]!=='all'&&!names.includes(filter[id]))filter[id]='all';
     $(id).replaceChildren(new Option(`全部${['一级','二级','三级'][index]}品类`,'all'),...names.map(name=>new Option(name,name)));
   }
-  for (const key of Object.keys(DEFAULT_FILTERS)) $(key).value = filter[key];
+  for (const key of Object.keys(DEFAULT_FILTERS)) { if($(key))$(key).value = filter[key]; }
   $('country').disabled = filter.role !== 'director';
   $('shop').disabled = filter.role === 'manager';
 }
@@ -748,6 +748,7 @@ function resetFilters() {
   render();
 }
 for (const key of Object.keys(DEFAULT_FILTERS)) {
+  if(!$(key))continue;
   $(key).addEventListener('change', event => {
     if(key==='days'&&event.target.value==='custom'){const period=periodFor(state.filters);state.filters.start=period.start;state.filters.end=period.end;}
     state.filters[key] = event.target.value;
@@ -1035,7 +1036,6 @@ targetDialog.addEventListener('change',async event=>{
         <label>国家<select id="country"></select></label>
         <label>店铺<select id="shop"></select></label>
         <label>一级品类<select id="category"><option value="all">全部一级品类</option></select></label><label>二级品类<select id="category2"><option value="all">全部二级品类</option></select></label><label>三级品类<select id="category3"><option value="all">全部三级品类</option></select></label>
-        <label>查看身份<select id="role"><option value="director">总监</option><option value="deputy">副总监</option><option value="manager">店长</option></select></label>
         <button id="reset-filters" class="text-button" type="button">重置筛选</button>
         <form id="custom-date-form" class="custom-date-form" hidden><label>开始日期<input id="custom-start" type="date" required></label><label>结束日期<input id="custom-end" type="date" required></label><button type="submit">应用日期</button><span id="custom-date-error" role="alert" hidden>结束日期不能早于开始日期。</span></form>
       </section>
