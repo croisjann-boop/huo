@@ -244,7 +244,7 @@ function exportCsv() {
   } else {
     const detail = state.page !== 1;
     const keys = detail ? PRODUCT_KEYS : DETAIL_KEYS;
-    let groups = detail ? matchingProducts(filtered, state.page === 3 ? state.query : '') : groupRows(filtered, dimensionKey(state));
+    let groups = detail ? matchingProducts(filtered, state.page === 3 ? state.query : '') : groupRows(filtered, 'country');
     if (state.page === 4) groups = groups.filter(row => flags(row, state.thresholds).length);
     header = ['维度', ...(detail ? ['商品名', 'ASIN', '店铺'] : []), ...keys, ...(detail ? ['异常判断'] : [])];
     body = groups.map(row => [row.name, ...(detail ? [row.raw[0].category3, row.raw[0].asin, row.raw[0].shop] : []), ...keys.map(key => metrics(row)[key]), ...(detail ? [flags(row, state.thresholds).join('、') || '正常'] : [])]);
