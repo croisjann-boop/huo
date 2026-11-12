@@ -27,6 +27,11 @@ function toast(message) {
 }
 function refreshFilters() {
   const filter = state.filters;
+  const currentPeriod=periodFor(filter);
+  $('custom-date-form').hidden=filter.days!=='custom';
+  $('custom-start').value=currentPeriod.start;
+  $('custom-end').value=currentPeriod.end;
+  $('custom-date-error').hidden=true;
   if (filter.role !== 'director') filter.country = '美国';
   if (filter.role === 'manager') filter.shop = '北美旗舰店';
   const stores = STORES.filter(store => filter.country === 'all' || store.country === filter.country);
@@ -81,6 +86,7 @@ function resetFilters() {
 }
 for (const key of Object.keys(DEFAULT_FILTERS)) {
   $(key).addEventListener('change', event => {
+    if(key==='days'&&event.target.value==='custom'){const period=periodFor(state.filters);state.filters.start=period.start;state.filters.end=period.end;}
     state.filters[key] = event.target.value;
     if(key==='category'){state.filters.category2='all';state.filters.category3='all';}
     if(key==='category2')state.filters.category3='all';
@@ -91,6 +97,11 @@ for (const key of Object.keys(DEFAULT_FILTERS)) {
     render();
   });
 }
+$('custom-date-form').addEventListener('submit',event=>{
+  event.preventDefault();const start=$('custom-start').value,end=$('custom-end').value;
+  if(!start||!end||start>end){$('custom-date-error').hidden=false;return;}
+  state.filters={...state.filters,days:'custom',start,end};render();
+});
 $('reset-filters').addEventListener('click', resetFilters);
 $('nav').addEventListener('click', event => {
   const button = event.target.closest('[data-page]');
@@ -258,7 +269,7 @@ function exportCsv() {
     body = groups.map(row => [row.name, ...(detail ? [row.raw[0].category3, row.raw[0].asin, row.raw[0].shop] : []), ...keys.map(key => metrics(row)[key]), ...(detail ? [flags(row, state.thresholds).join('、') || '正常'] : [])]);
   }
   const period = periodFor(state.filters);
-  const scope = [`日期=${period.start}至${DATA_END}`, `国家=${state.filters.country}`, `店铺=${state.filters.shop}`, `一级品类=${state.filters.category}`, `二级品类=${state.filters.category2}`, `三级品类=${state.filters.category3}`, `身份=${state.filters.role}`, '全部为虚构模拟数据；金额 USD；比例单位 %'];
+  const scope = [`日期=${period.start}至${period.end}`, `国家=${state.filters.country}`, `店铺=${state.filters.shop}`, `一级品类=${state.filters.category}`, `二级品类=${state.filters.category2}`, `三级品类=${state.filters.category3}`, `身份=${state.filters.role}`, '全部为虚构模拟数据；金额 USD；比例单位 %'];
   if (state.page === 3) scope.push(`预警周期=${state.skuCycle.start}至${state.skuCycle.end}`,`预警灯色筛选=${state.skuLight}`,`搜索=${state.query}`);
   const blob = new Blob([toCsv([scope, header, ...body])], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
