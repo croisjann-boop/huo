@@ -1,4 +1,3 @@
-import { detailCategoryRows, detailCategoryOptions } from './views.js';
 import { validateTargetCsv, applyTargetRecords } from './target-import.js';
 import { escapeHtml } from './core.js';
 import { skuRuleKey } from './sku-alerts.js';
@@ -17,7 +16,7 @@ const skuTargetPlan = createMockTargetPlan();
 let targetRecords = [];
 try { const saved=readSetting('amz-target-import-v1',[]); if(Array.isArray(saved)&&saved.length){const csv=toCsv([['店铺','SKU','周期开始','周期结束','目标金额'],...saved.map(r=>[r.shop,r.sku,r.start,r.end,r.target])]);targetRecords=validateTargetCsv(csv,rows).records;} } catch { /* 忽略损坏的导入记录。 */ }
 const savedSkuSettings = normalizeSkuSettings(readSetting('amz-sku-warnings-v1', null));
-const state = { page: window.location.hash === '#advertising-knowledge' ? 7 : window.location.hash === '#sku-details' ? 3 : 0, dimension: '国家', level: 1, detailCategories:['all','all','all'], query: '', filters: { ...DEFAULT_FILTERS }, thresholds: loadThresholds(), frequency: loadFrequency(), knowledgeTab: 'strategies', knowledgeFilters: { ...DEFAULT_KNOWLEDGE_FILTERS }, skuCycle:savedSkuSettings.cycle,skuRules:savedSkuSettings.rules,skuModels:[],skuLight:'all' };
+const state = { page: window.location.hash === '#advertising-knowledge' ? 7 : window.location.hash === '#sku-details' ? 3 : 0, dimension: '国家', level: 1, query: '', filters: { ...DEFAULT_FILTERS }, thresholds: loadThresholds(), frequency: loadFrequency(), knowledgeTab: 'strategies', knowledgeFilters: { ...DEFAULT_KNOWLEDGE_FILTERS }, skuCycle:savedSkuSettings.cycle,skuRules:savedSkuSettings.rules,skuModels:[],skuLight:'all' };
 let toastTimer;
 function toast(message) {
   clearTimeout(toastTimer);
@@ -40,7 +39,6 @@ function refreshFilters() {
 function render() {
   refreshFilters();
   const filtered = filterRows(applyTargetRecords(rows,targetRecords), state.filters);
-  if(state.page===1){for(let level=1;level<=3;level++){if(state.detailCategories[level-1]!=='all'&&!detailCategoryOptions(filtered,state.detailCategories,level).includes(state.detailCategories[level-1]))state.detailCategories[level-1]='all';}}
   const period = periodFor(state.filters);
   $('title').textContent = PAGES[state.page];
   $('crumb').textContent = PAGES[state.page];
@@ -73,7 +71,6 @@ function resetFilters() {
   state.filters = { ...DEFAULT_FILTERS, role: state.filters.role };
   state.query = '';
   state.skuLight = 'all';
-  state.detailCategories=['all','all','all'];
   render();
 }
 for (const key of Object.keys(DEFAULT_FILTERS)) {
@@ -100,7 +97,6 @@ $('nav').addEventListener('click', event => {
   window.scrollTo({ top: 0, behavior: 'instant' });
 });
 $('content').addEventListener('click', event => {
-  if(event.target.closest('[data-action=reset-detail-categories]')){state.detailCategories=['all','all','all'];render();return;}
   const targetAction=event.target.closest('[data-action]')?.dataset.action;
   if(targetAction==='import-targets'){openTargetImport();return;}
   if(targetAction==='target-template'){downloadTargetTemplate();return;}
@@ -162,10 +158,9 @@ $('content').addEventListener('click', event => {
     toast(saved ? '已恢复并保存默认标准' : '已恢复默认标准；浏览器不允许保存，仅本次有效');
   }
   const dimension = event.target.closest('[data-dimension]')?.dataset.dimension;
-  if (dimension) { state.dimension = dimension; render(); }
+  if (dimension) { state.dimension = dimension; const level=event.target.closest('[data-category-level]')?.dataset.categoryLevel;if(level)state.level=Number(level);render(); }
 });
 $('content').addEventListener('change', event => {
-  if(event.target.dataset.detailCategory){const level=Number(event.target.dataset.detailCategory);state.detailCategories[level-1]=event.target.value;for(let i=level;i<3;i++)state.detailCategories[i]='all';state.level=Math.max(1,...state.detailCategories.map((v,i)=>v==='all'?0:i+1));render();return;}
   const filter = event.target.dataset.knowledgeFilter;
   if (filter && Object.hasOwn(DEFAULT_KNOWLEDGE_FILTERS, filter)) {
     state.knowledgeFilters[filter] = event.target.value;
@@ -235,7 +230,6 @@ $('content').addEventListener('submit', event => {
 
 function exportCsv() {
   let filtered = filterRows(applyTargetRecords(rows,targetRecords), state.filters);
-  if(state.page===1&&state.dimension==='品类')filtered=detailCategoryRows(filtered,state);
   if (!filtered.length && state.page !== 3) return;
   let header, body;
   if (state.page === 3) {
@@ -257,7 +251,6 @@ function exportCsv() {
   }
   const period = periodFor(state.filters);
   const scope = [`日期=${period.start}至${DATA_END}`, `国家=${state.filters.country}`, `店铺=${state.filters.shop}`, `品类=${state.filters.category}`, `身份=${state.filters.role}`, '全部为虚构模拟数据；金额 USD；比例单位 %'];
-  if(state.page===1&&state.dimension==='品类')scope.push(...state.detailCategories.map((value,index)=>`${index+1}级分类=${value}`));
   if (state.page === 3) scope.push(`预警周期=${state.skuCycle.start}至${state.skuCycle.end}`,`预警灯色筛选=${state.skuLight}`,`搜索=${state.query}`);
   const blob = new Blob([toCsv([scope, header, ...body])], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
