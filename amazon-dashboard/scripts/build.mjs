@@ -4,7 +4,7 @@ import path from 'node:path';
 
 const root = new URL('../', import.meta.url);
 // 当前项目仅使用具名导入及声明式导出；不引入第三方打包依赖。
-const moduleNames = ['mock-data.js', 'core.js', 'storage.js', 'sku-alerts.js', 'sku-view.js', 'knowledge-data.js', 'knowledge.js', 'views.js', 'main.js'];
+const moduleNames = ['mock-data.js', 'core.js', 'storage.js', 'sku-alerts.js', 'sku-view.js', 'target-import.js', 'knowledge-data.js', 'knowledge.js', 'views.js', 'main.js'];
 
 function inlineModule(source) {
   return source
