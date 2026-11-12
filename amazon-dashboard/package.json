@@ -1,6 +1,6 @@
 {
   "name": "amazon-business-dashboard",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "private": true,
   "type": "module",
   "description": "亚马逊销售经营看板：无第三方依赖的模块化前端演示项目",
