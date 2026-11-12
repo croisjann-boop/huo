@@ -1,7 +1,7 @@
 import { DATA_END, dateBefore } from './mock-data.js';
 
 export const FIELDS = ['revenue', 'units', 'adSpend', 'clicks', 'impressions', 'adRevenue', 'adOrders', 'desktopVisits', 'mobileVisits', 'refunds', 'target'];
-export const DEFAULT_FILTERS = { days: '30', country: 'all', shop: 'all', category: 'all', role: 'director' };
+export const DEFAULT_FILTERS = { days: '30', country: 'all', shop: 'all', category: 'all', category2: 'all', category3: 'all', role: 'director' };
 export const DEFAULT_THRESHOLDS = { 达成率: 90, ACOS: 30, 退款率: 5, CTR: 0.3, CPC: 2, 推广占比: 18, 净销售额: 500, 销量: 5, 访客: 50, 展现: 1000, 花费: 300, 点击: 10 };
 export const MAX_RULES = new Set(['ACOS', '退款率', 'CPC', '推广占比', '花费']);
 export const PERCENT_METRICS = new Set(['推广占比', '退款率', 'CTR', 'CVR', 'ACOS', '达成率']);
@@ -54,7 +54,9 @@ export function filterScopeRows(rows, filters) {
     && (filters.role !== 'manager' || row.shop === '北美旗舰店')
     && (filters.country === 'all' || row.country === filters.country)
     && (filters.shop === 'all' || row.shop === filters.shop)
-    && (filters.category === 'all' || row.category1 === filters.category));
+    && (filters.category === 'all' || row.category1 === filters.category)
+    && (!filters.category2 || filters.category2 === 'all' || row.category2 === filters.category2)
+    && (!filters.category3 || filters.category3 === 'all' || row.category3 === filters.category3));
 }
 
 export function groupRows(rows, key) {
