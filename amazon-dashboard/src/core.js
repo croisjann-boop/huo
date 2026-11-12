@@ -39,7 +39,11 @@ export function formatMetric(key, value) {
 }
 
 export function periodFor(filters, endDate = DATA_END) {
-  const days = filters.days === 'month' ? Number(endDate.slice(-2)) : Number(filters.days);
+  if(filters.days==='custom'){
+    const valid=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(Date.parse(value+'T00:00:00Z'))&&new Date(value+'T00:00:00Z').toISOString().slice(0,10)===value;
+    if(valid(filters.start)&&valid(filters.end)&&filters.start<=filters.end)return {start:filters.start,end:filters.end,days:Math.round((Date.parse(filters.end+'T00:00:00Z')-Date.parse(filters.start+'T00:00:00Z'))/86400000)+1};
+  }
+  const days = filters.days === 'month' ? Number(endDate.slice(-2)) : filters.days==='custom'?30:Number(filters.days);
   return { start: dateBefore(endDate, days - 1), end: endDate, days };
 }
 
