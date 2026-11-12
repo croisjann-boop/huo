@@ -1,3 +1,6 @@
+import { validateTargetCsv, applyTargetRecords } from './target-import.js';
+import { escapeHtml } from './core.js';
+import { skuRuleKey } from './sku-alerts.js';
 import { DATA_END, STORES, createMockRows, createMockTargetPlan } from './mock-data.js';
 import { DEFAULT_FILTERS, DEFAULT_THRESHOLDS, aggregate, filterRows, filterScopeRows, periodFor, metrics, groupRows, flags, toCsv, validateThresholds } from './core.js';
 import { PAGES, DETAIL_KEYS, PRODUCT_KEYS, AD_TYPES, dimensionKey, matchingProducts, renderPage, table } from './views.js';
@@ -10,6 +13,8 @@ import { renderSkuSummary, renderSkuResults, renderSkuRuleDialog, renderSkuRuleP
 const $ = id => document.getElementById(id);
 const rows = createMockRows();
 const skuTargetPlan = createMockTargetPlan();
+let targetRecords = [];
+try { const saved=readSetting('amz-target-import-v1',[]); if(Array.isArray(saved)&&saved.length){const csv=toCsv([['店铺','SKU','周期开始','周期结束','目标金额'],...saved.map(r=>[r.shop,r.sku,r.start,r.end,r.target])]);targetRecords=validateTargetCsv(csv,rows).records;} } catch { /* 忽略损坏的导入记录。 */ }
 const savedSkuSettings = normalizeSkuSettings(readSetting('amz-sku-warnings-v1', null));
 const state = { page: window.location.hash === '#advertising-knowledge' ? 7 : window.location.hash === '#sku-details' ? 3 : 0, dimension: '国家', level: 1, query: '', filters: { ...DEFAULT_FILTERS }, thresholds: loadThresholds(), frequency: loadFrequency(), knowledgeTab: 'strategies', knowledgeFilters: { ...DEFAULT_KNOWLEDGE_FILTERS }, skuCycle:savedSkuSettings.cycle,skuRules:savedSkuSettings.rules,skuModels:[],skuLight:'all' };
 let toastTimer;
@@ -33,7 +38,7 @@ function refreshFilters() {
 }
 function render() {
   refreshFilters();
-  const filtered = filterRows(rows, state.filters);
+  const filtered = filterRows(applyTargetRecords(rows,targetRecords), state.filters);
   const period = periodFor(state.filters);
   $('title').textContent = PAGES[state.page];
   $('crumb').textContent = PAGES[state.page];
@@ -49,7 +54,8 @@ function render() {
   $('export').disabled = state.page === 3 ? !visibleSkuModels(state.skuModels,state.query,state.skuLight).length : !filtered.length;
 }
 function refreshSkuModels() {
-  state.skuModels = createSkuModels(filterScopeRows(rows,state.filters),filterRows(rows,state.filters),state.skuCycle,state.skuRules,skuTargetPlan,DATA_END);
+  state.skuModels = createSkuModels(filterScopeRows(applyTargetRecords(rows,targetRecords),state.filters),filterRows(applyTargetRecords(rows,targetRecords),state.filters),state.skuCycle,state.skuRules,applyTargetRecords(skuTargetPlan,targetRecords),DATA_END);
+  state.skuModels.forEach(item=>{item.importedTarget=targetRecords.some(r=>r.shop===item.shop&&r.sku===item.name&&r.start<=item.cycle.end&&r.end>=item.cycle.start);});
 }
 function refreshSkuDetails() {
   refreshSkuModels();
@@ -91,6 +97,9 @@ $('nav').addEventListener('click', event => {
   window.scrollTo({ top: 0, behavior: 'instant' });
 });
 $('content').addEventListener('click', event => {
+  const targetAction=event.target.closest('[data-action]')?.dataset.action;
+  if(targetAction==='import-targets'){openTargetImport();return;}
+  if(targetAction==='target-template'){downloadTargetTemplate();return;}
   const skuLight = event.target.closest('[data-sku-light]')?.dataset.skuLight;
   if (skuLight) { state.skuLight=skuLight; refreshSkuDetails(); return; }
   const skuId = event.target.closest('[data-sku-rule]')?.dataset.skuRule;
@@ -220,7 +229,7 @@ $('content').addEventListener('submit', event => {
 });
 
 function exportCsv() {
-  const filtered = filterRows(rows, state.filters);
+  const filtered = filterRows(applyTargetRecords(rows,targetRecords), state.filters);
   if (!filtered.length && state.page !== 3) return;
   let header, body;
   if (state.page === 3) {
@@ -271,3 +280,54 @@ function exportKnowledgeCsv() {
 }
 $('export').addEventListener('click', exportCsv);
 render();
+
+// 两个看板共享按店铺、SKU 和周期保存的目标计划。
+const targetDialog=document.createElement('dialog');
+targetDialog.className='target-import-dialog';
+targetDialog.setAttribute('aria-label','批量导入经营目标');
+document.body.append(targetDialog);
+let pendingTargets=null;
+function downloadTargetTemplate(){
+  const cycle=state.page===3?state.skuCycle:periodFor(state.filters);
+  const catalog=[...new Map(filterScopeRows(rows,state.filters).map(r=>[JSON.stringify([r.shop,r.sku]),r])).values()];
+  const plan=applyTargetRecords(skuTargetPlan,targetRecords);
+  const matrix=[['店铺','SKU','周期开始','周期结束','目标金额'],...catalog.map(r=>{
+    const total=plan.filter(p=>p.shop===r.shop&&p.sku===r.sku&&p.date>=cycle.start&&p.date<=cycle.end).reduce((sum,p)=>sum+p.target,0);
+    return [r.shop,r.sku,cycle.start,cycle.end,Number(total.toFixed(2))||10000];
+  })];
+  const url=URL.createObjectURL(new Blob([toCsv(matrix)],{type:'text/csv;charset=utf-8'}));
+  const a=document.createElement('a');a.href=url;a.download='经营目标导入模板.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function openTargetImport(){
+  pendingTargets=null;
+  targetReadVersion++;
+  targetDialog.innerHTML=`<header><h2>批量导入经营目标</h2><button type="button" data-target-close aria-label="关闭">×</button></header><p>两个看板共用目标。按“店铺 + SKU + 周期”导入整周期目标，金额单位 USD；业绩总览按周期天数分配到每天，随筛选汇总。单品明细使用所选预警周期的目标。</p><p>相同周期覆盖旧目标；未导入的 SKU 保留原目标。CSV 内与已有导入周期均不可交叉重叠。匹配周期的单 SKU 目标将被覆盖，灯色阈值保留。</p><button type="button" data-target-template>下载目标模板</button> <button type="button" data-target-reset>清除已导入目标</button><label class="target-file-label">选择 CSV 文件<input type="file" accept=".csv,text/csv" id="target-csv-file"></label><p class="muted">支持 UTF-8 / GB18030 编码；请保留模板列名与店铺、SKU，仅修改日期和目标金额。目标只保存在当前浏览器。</p><div id="target-import-preview" role="status"></div><div class="form-actions"><button type="button" class="primary" id="target-import-confirm" disabled>确认导入</button><button type="button" data-target-close>取消</button></div>`;
+  targetDialog.showModal();
+}
+targetDialog.addEventListener('click',event=>{
+  if(event.target.closest('[data-target-close]')){targetReadVersion++;targetDialog.close();}
+  if(event.target.closest('[data-target-reset]')){if(!writeSetting('amz-target-import-v1',[])){toast('无法保存，清除未应用');return;}targetRecords=[];pendingTargets=null;targetReadVersion++;targetDialog.close();render();toast('已清除 CSV 目标，恢复默认日目标计划；单 SKU 手动规则保留');return;}
+  if(event.target.closest('[data-target-template]'))downloadTargetTemplate();
+  if(event.target.id==='target-import-confirm'&&pendingTargets){
+    const nextRules={...state.skuRules};
+    for(const r of pendingTargets.records){const key=skuRuleKey(r.shop,r.sku,r);if(nextRules[key])nextRules[key]={...nextRules[key],target:r.target};}
+    if(!writeSetting('amz-target-import-v1',pendingTargets.merged)){toast('浏览器无法保存目标，导入未应用');return;}
+    targetRecords=pendingTargets.merged;state.skuRules=nextRules;persistSkuSettings();
+    const cycles=new Set(pendingTargets.records.map(r=>r.start+'|'+r.end));
+    if(state.page===3&&cycles.size===1){const r=pendingTargets.records[0];state.skuCycle={start:r.start,end:r.end};persistSkuSettings();}
+    const count=pendingTargets.records.length;targetDialog.close();render();toast(`已导入 ${count} 条目标，两个看板已更新`);
+  }
+});
+let targetReadVersion=0;
+targetDialog.addEventListener('change',async event=>{
+  if(event.target.id!=='target-csv-file')return;
+  const version=++targetReadVersion,file=event.target.files[0];pendingTargets=null;
+  const preview=targetDialog.querySelector('#target-import-preview'),confirm=targetDialog.querySelector('#target-import-confirm');confirm.disabled=true;preview.textContent='正在检查 CSV…';
+  try{
+    if(!file)throw Error('请选择 CSV 文件');if(file.size>5*1024*1024)throw Error('CSV 文件不能超过 5 MB');
+    const buffer=await file.arrayBuffer();let text;try{text=new TextDecoder('utf-8',{fatal:true}).decode(buffer);}catch{text=new TextDecoder('gb18030',{fatal:true}).decode(buffer);}
+    const result=validateTargetCsv(text,rows,targetRecords);if(version!==targetReadVersion)return;
+    pendingTargets=result;
+    preview.innerHTML=`<p class="green">检查通过：${result.records.length} 条目标，覆盖 ${result.replaced} 条已有导入目标。确认后生效。</p><p class="muted">${state.page===3?'若所有记录周期一致，将自动切换至该预警周期。':'业绩总览按顶部时间范围汇总目标；请确认日期范围。'}</p><div class="scroll"><table><thead><tr><th>店铺 / SKU</th><th>周期</th><th>目标 USD</th></tr></thead><tbody>${result.records.slice(0,20).map(r=>`<tr><th>${escapeHtml(r.shop)} / ${escapeHtml(r.sku)}</th><td>${r.start} — ${r.end}</td><td>${r.target.toLocaleString()}</td></tr>`).join('')}</tbody></table></div>${result.records.length>20?'<p>预览前 20 条，确认将导入全部记录。</p>':''}`;confirm.disabled=false;
+  }catch(error){if(version!==targetReadVersion)return;preview.textContent=error.message;preview.style.whiteSpace='pre-wrap';}
+});
