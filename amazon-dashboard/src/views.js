@@ -1,3 +1,4 @@
+import { targetImportControls } from './target-import.js';
 import { aggregate, metrics, formatMetric as fmt, groupRows, flags, escapeHtml as esc, MAX_RULES } from './core.js';
 import { dateBefore } from './mock-data.js';
 import { renderKnowledgePage } from './knowledge.js';
@@ -43,7 +44,7 @@ function overview(rows, period) {
   const total = aggregate(rows);
   const values = metrics(total);
   const cards = Object.entries(values).filter(([key]) => !['达成率', '目标', '电脑端访客', '手机端访客'].includes(key));
-  return `<div class="cards">${cards.map(([key, value], index) => `<section class="card ${index === 0 ? 'featured' : ''}"><span class="metric-label">${esc(key)}</span><strong>${fmt(key, value)}</strong><small>所选期间 · 模拟数据</small></section>`).join('')}</div><div class="split"><section class="panel"><div class="panel-heading"><h2>净销售额趋势</h2><span class="muted">USD · 按日</span></div>${trend(rows, period)}<p class="muted">按日期从早到晚展示；悬停数据点查看当日销售额。</p><details><summary>查看每日销售数据</summary>${table(groupRows(rows, 'date').sort((a, b) => a.name.localeCompare(b.name)), ['净销售额', '销量'])}</details></section><section class="panel goal"><h2>经营目标进度</h2><strong class="goal-value">${fmt('达成率', values.达成率)}</strong><div class="bar" role="img" aria-label="目标达成率 ${fmt('达成率', values.达成率)}"><i style="width:${Math.min(values.达成率 ?? 0, 100)}%"></i></div><p>期间目标 <b>${fmt('目标', total.target)}</b></p><p class="muted">实际净销售额 / 所选期间经营目标</p><button class="primary" data-action="diagnose">查看异常诊断 →</button></section></div>`;
+  return `<div class="cards">${cards.map(([key, value], index) => `<section class="card ${index === 0 ? 'featured' : ''}"><span class="metric-label">${esc(key)}</span><strong>${fmt(key, value)}</strong><small>所选期间 · 模拟数据</small></section>`).join('')}</div><div class="split"><section class="panel"><div class="panel-heading"><h2>净销售额趋势</h2><span class="muted">USD · 按日</span></div>${trend(rows, period)}<p class="muted">按日期从早到晚展示；悬停数据点查看当日销售额。</p><details><summary>查看每日销售数据</summary>${table(groupRows(rows, 'date').sort((a, b) => a.name.localeCompare(b.name)), ['净销售额', '销量'])}</details></section><section class="panel goal"><h2>经营目标进度</h2>${targetImportControls()}<strong class="goal-value">${fmt('达成率', values.达成率)}</strong><div class="bar" role="img" aria-label="目标达成率 ${fmt('达成率', values.达成率)}"><i style="width:${Math.min(values.达成率 ?? 0, 100)}%"></i></div><p>期间目标 <b>${fmt('目标', total.target)}</b></p><p class="muted">实际净销售额 / 所选期间经营目标；导入周期目标按天分配后汇总</p><button class="primary" data-action="diagnose">查看异常诊断 →</button></section></div>`;
 }
 
 function details(rows, state) {
