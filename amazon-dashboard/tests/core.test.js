@@ -77,3 +77,13 @@ test('所有页面可由完整数据和空数据生成；趋势不含非法坐�
     }
   }
 });
+
+test('自定义日期含首尾日，兼容单日、闰年和无销售记录区间',()=>{
+  const custom={...DEFAULT_FILTERS,days:'custom',start:'2026-11-01',end:'2026-11-03'};
+  assert.deepEqual(periodFor(custom),{start:'2026-11-01',end:'2026-11-03',days:3});
+  assert.equal(filterRows(rows,custom).length,54);
+  assert.equal(periodFor({...custom,start:'2024-02-28',end:'2024-03-01'}).days,3);
+  assert.equal(filterRows(rows,{...custom,start:'2030-01-01',end:'2030-01-01'}).length,0);
+  assert.equal(periodFor({...custom,end:custom.start}).days,1);
+  assert.equal(periodFor({...custom,start:'2026-11-30',end:'2026-11-01'}).days,30);
+});
