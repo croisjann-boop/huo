@@ -41,6 +41,8 @@ main{margin-left:226px;padding:30px 34px;max-width:2000px}.top{display:flex;just
 
 
 
+.custom-date-form{display:flex;align-items:end;gap:12px;flex-wrap:wrap;width:100%;padding-top:12px;border-top:1px solid #e7edf4}.custom-date-form[hidden]{display:none}.custom-date-form label{flex:0 1 190px}.custom-date-form input{font-size:13px;width:100%}.custom-date-form button{font-size:12px}.custom-date-form [role=alert]{font-size:12px;color:#bd5348}
+
 </style>
     <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -151,7 +153,11 @@ function formatMetric(key, value) {
 }
 
 function periodFor(filters, endDate = DATA_END) {
-  const days = filters.days === 'month' ? Number(endDate.slice(-2)) : Number(filters.days);
+  if(filters.days==='custom'){
+    const valid=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(Date.parse(value+'T00:00:00Z'))&&new Date(value+'T00:00:00Z').toISOString().slice(0,10)===value;
+    if(valid(filters.start)&&valid(filters.end)&&filters.start<=filters.end)return {start:filters.start,end:filters.end,days:Math.round((Date.parse(filters.end+'T00:00:00Z')-Date.parse(filters.start+'T00:00:00Z'))/86400000)+1};
+  }
+  const days = filters.days === 'month' ? Number(endDate.slice(-2)) : filters.days==='custom'?30:Number(filters.days);
   return { start: dateBefore(endDate, days - 1), end: endDate, days };
 }
 
@@ -684,6 +690,11 @@ function toast(message) {
 }
 function refreshFilters() {
   const filter = state.filters;
+  const currentPeriod=periodFor(filter);
+  $('custom-date-form').hidden=filter.days!=='custom';
+  $('custom-start').value=currentPeriod.start;
+  $('custom-end').value=currentPeriod.end;
+  $('custom-date-error').hidden=true;
   if (filter.role !== 'director') filter.country = '美国';
   if (filter.role === 'manager') filter.shop = '北美旗舰店';
   const stores = STORES.filter(store => filter.country === 'all' || store.country === filter.country);
@@ -738,6 +749,7 @@ function resetFilters() {
 }
 for (const key of Object.keys(DEFAULT_FILTERS)) {
   $(key).addEventListener('change', event => {
+    if(key==='days'&&event.target.value==='custom'){const period=periodFor(state.filters);state.filters.start=period.start;state.filters.end=period.end;}
     state.filters[key] = event.target.value;
     if(key==='category'){state.filters.category2='all';state.filters.category3='all';}
     if(key==='category2')state.filters.category3='all';
@@ -748,6 +760,11 @@ for (const key of Object.keys(DEFAULT_FILTERS)) {
     render();
   });
 }
+$('custom-date-form').addEventListener('submit',event=>{
+  event.preventDefault();const start=$('custom-start').value,end=$('custom-end').value;
+  if(!start||!end||start>end){$('custom-date-error').hidden=false;return;}
+  state.filters={...state.filters,days:'custom',start,end};render();
+});
 $('reset-filters').addEventListener('click', resetFilters);
 $('nav').addEventListener('click', event => {
   const button = event.target.closest('[data-page]');
@@ -915,7 +932,7 @@ function exportCsv() {
     body = groups.map(row => [row.name, ...(detail ? [row.raw[0].category3, row.raw[0].asin, row.raw[0].shop] : []), ...keys.map(key => metrics(row)[key]), ...(detail ? [flags(row, state.thresholds).join('、') || '正常'] : [])]);
   }
   const period = periodFor(state.filters);
-  const scope = [`日期=${period.start}至${DATA_END}`, `国家=${state.filters.country}`, `店铺=${state.filters.shop}`, `一级品类=${state.filters.category}`, `二级品类=${state.filters.category2}`, `三级品类=${state.filters.category3}`, `身份=${state.filters.role}`, '全部为虚构模拟数据；金额 USD；比例单位 %'];
+  const scope = [`日期=${period.start}至${period.end}`, `国家=${state.filters.country}`, `店铺=${state.filters.shop}`, `一级品类=${state.filters.category}`, `二级品类=${state.filters.category2}`, `三级品类=${state.filters.category3}`, `身份=${state.filters.role}`, '全部为虚构模拟数据；金额 USD；比例单位 %'];
   if (state.page === 3) scope.push(`预警周期=${state.skuCycle.start}至${state.skuCycle.end}`,`预警灯色筛选=${state.skuLight}`,`搜索=${state.query}`);
   const blob = new Blob([toCsv([scope, header, ...body])], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -1014,12 +1031,13 @@ targetDialog.addEventListener('change',async event=>{
         <div class="top-actions"><span class="badge" id="data-badge">● 虚构模拟数据</span><button id="export" type="button">↓ 导出 CSV</button></div>
       </header>
       <section class="filters" id="sales-filters" aria-label="数据筛选">
-        <label>时间<select id="days"><option value="7">最近7天</option><option value="30" selected>最近30天</option><option value="month">本月累计</option></select></label>
+        <label>时间<select id="days"><option value="7">最近7天</option><option value="30" selected>最近30天</option><option value="month">本月累计</option><option value="custom">自定义日期</option></select></label>
         <label>国家<select id="country"></select></label>
         <label>店铺<select id="shop"></select></label>
         <label>一级品类<select id="category"><option value="all">全部一级品类</option></select></label><label>二级品类<select id="category2"><option value="all">全部二级品类</option></select></label><label>三级品类<select id="category3"><option value="all">全部三级品类</option></select></label>
         <label>查看身份<select id="role"><option value="director">总监</option><option value="deputy">副总监</option><option value="manager">店长</option></select></label>
         <button id="reset-filters" class="text-button" type="button">重置筛选</button>
+        <form id="custom-date-form" class="custom-date-form" hidden><label>开始日期<input id="custom-start" type="date" required></label><label>结束日期<input id="custom-end" type="date" required></label><button type="submit">应用日期</button><span id="custom-date-error" role="alert" hidden>结束日期不能早于开始日期。</span></form>
       </section>
       <div id="content"></div>
       <footer class="footnote" id="sales-footnote">统一折算 USD；推广占比 = 广告花费 / 净销售额；ACOS = 花费 / 广告归因销售额。访客为设备访次加总，非跨设备去重人数。广告统一模拟 7 日归因。</footer>
