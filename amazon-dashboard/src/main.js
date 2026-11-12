@@ -1,3 +1,4 @@
+import { CATEGORY_CATALOG } from './category-data.js';
 import { validateTargetCsv, applyTargetRecords } from './target-import.js';
 import { escapeHtml } from './core.js';
 import { skuRuleKey } from './sku-alerts.js';
@@ -32,6 +33,11 @@ function refreshFilters() {
   if (filter.shop !== 'all' && !stores.some(store => store.name === filter.shop)) filter.shop = 'all';
   $('country').replaceChildren(...[{ value: 'all', label: '全部国家' }, ...STORES.map(store => ({ value: store.country, label: store.country }))].map(item => new Option(item.label, item.value)));
   $('shop').replaceChildren(new Option('全部店铺', 'all'), ...stores.map(store => new Option(store.name, store.name)));
+  for(const [index,id] of ['category','category2','category3'].entries()){
+    const names=[...new Set(CATEGORY_CATALOG.paths.filter(path=>(index<1||filter.category==='all'||path[0]===filter.category)&&(index<2||filter.category2==='all'||path[1]===filter.category2)).map(path=>path[index]).filter(Boolean))];
+    if(filter[id]!=='all'&&!names.includes(filter[id]))filter[id]='all';
+    $(id).replaceChildren(new Option(`全部${['一级','二级','三级'][index]}品类`,'all'),...names.map(name=>new Option(name,name)));
+  }
   for (const key of Object.keys(DEFAULT_FILTERS)) $(key).value = filter[key];
   $('country').disabled = filter.role !== 'director';
   $('shop').disabled = filter.role === 'manager';
@@ -76,6 +82,8 @@ function resetFilters() {
 for (const key of Object.keys(DEFAULT_FILTERS)) {
   $(key).addEventListener('change', event => {
     state.filters[key] = event.target.value;
+    if(key==='category'){state.filters.category2='all';state.filters.category3='all';}
+    if(key==='category2')state.filters.category3='all';
     if (key === 'role') {
       state.filters.country = state.filters.role === 'director' ? 'all' : '美国';
       state.filters.shop = state.filters.role === 'manager' ? '北美旗舰店' : 'all';
@@ -250,7 +258,7 @@ function exportCsv() {
     body = groups.map(row => [row.name, ...(detail ? [row.raw[0].category3, row.raw[0].asin, row.raw[0].shop] : []), ...keys.map(key => metrics(row)[key]), ...(detail ? [flags(row, state.thresholds).join('、') || '正常'] : [])]);
   }
   const period = periodFor(state.filters);
-  const scope = [`日期=${period.start}至${DATA_END}`, `国家=${state.filters.country}`, `店铺=${state.filters.shop}`, `品类=${state.filters.category}`, `身份=${state.filters.role}`, '全部为虚构模拟数据；金额 USD；比例单位 %'];
+  const scope = [`日期=${period.start}至${DATA_END}`, `国家=${state.filters.country}`, `店铺=${state.filters.shop}`, `一级品类=${state.filters.category}`, `二级品类=${state.filters.category2}`, `三级品类=${state.filters.category3}`, `身份=${state.filters.role}`, '全部为虚构模拟数据；金额 USD；比例单位 %'];
   if (state.page === 3) scope.push(`预警周期=${state.skuCycle.start}至${state.skuCycle.end}`,`预警灯色筛选=${state.skuLight}`,`搜索=${state.query}`);
   const blob = new Blob([toCsv([scope, header, ...body])], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
