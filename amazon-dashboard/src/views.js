@@ -47,8 +47,18 @@ function overview(rows, period) {
   return `<div class="cards">${cards.map(([key, value], index) => `<section class="card ${index === 0 ? 'featured' : ''}"><span class="metric-label">${esc(key)}</span><strong>${fmt(key, value)}</strong><small>所选期间 · 模拟数据</small></section>`).join('')}</div><div class="split"><section class="panel"><div class="panel-heading"><h2>净销售额趋势</h2><span class="muted">USD · 按日</span></div>${trend(rows, period)}<p class="muted">按日期从早到晚展示；悬停数据点查看当日销售额。</p><details><summary>查看每日销售数据</summary>${table(groupRows(rows, 'date').sort((a, b) => a.name.localeCompare(b.name)), ['净销售额', '销量'])}</details></section><section class="panel goal"><h2>经营目标进度</h2>${targetImportControls()}<strong class="goal-value">${fmt('达成率', values.达成率)}</strong><div class="bar" role="img" aria-label="目标达成率 ${fmt('达成率', values.达成率)}"><i style="width:${Math.min(values.达成率 ?? 0, 100)}%"></i></div><p>期间目标 <b>${fmt('目标', total.target)}</b></p><p class="muted">实际净销售额 / 所选期间经营目标；导入周期目标按天分配后汇总</p><button class="primary" data-action="diagnose">查看异常诊断 →</button></section></div>`;
 }
 
+export function detailCategoryRows(rows, state) {
+  const selected=state.detailCategories ?? ['all','all','all'];
+  return rows.filter(row=>selected.every((value,index)=>value==='all'||row[`category${index+1}`]===value));
+}
+export function detailCategoryOptions(rows, selected, level) {
+  return [...new Set(rows.filter(row=>selected.slice(0,level-1).every((value,index)=>value==='all'||row[`category${index+1}`]===value)).map(row=>row[`category${level}`]))].sort((a,b)=>a.localeCompare(b,'zh-CN'));
+}
 function details(rows, state) {
-  return `<section class="panel"><div class="panel-heading wrap"><h2>业绩维度分析</h2><div class="inline-controls"><div class="segmented" aria-label="统计维度">${['国家', '店铺', '品类'].map(value => `<button data-dimension="${value}" aria-pressed="${state.dimension === value}" class="${state.dimension === value ? 'selected' : ''}">${value}</button>`).join('')}</div><label>分类层级<select id="level">${[1, 2, 3].map(value => `<option value="${value}" ${state.level === value ? 'selected' : ''}>${value}级分类</option>`).join('')}</select></label></div></div>${table(groupRows(rows, dimensionKey(state)), DETAIL_KEYS)}</section>`;
+  const selected=state.detailCategories ?? ['all','all','all'];
+  const categoryControls=state.dimension==='品类' ? `<div class="detail-category-filters" role="group" aria-label="品类层级筛选">${[1,2,3].map(level=>`<label>${level}级分类<select data-detail-category="${level}" aria-label="${level}级分类"><option value="all">全部${level}级分类</option>${detailCategoryOptions(rows,selected,level).map(value=>`<option value="${esc(value)}" ${selected[level-1]===value?'selected':''}>${esc(value)}</option>`).join('')}</select></label>`).join('')}<button type="button" data-action="reset-detail-categories">重置分类</button></div>` : '';
+  const visible=state.dimension==='品类'?detailCategoryRows(rows,state):rows;
+  return `<section class="panel"><div class="panel-heading wrap"><h2>业绩维度分析</h2><div class="inline-controls"><div class="segmented" aria-label="统计维度">${['国家', '店铺', '品类'].map(value => `<button data-dimension="${value}" aria-pressed="${state.dimension === value}" class="${state.dimension === value ? 'selected' : ''}">${value}</button>`).join('')}</div>${categoryControls}<label>汇总层级<select id="level">${[1, 2, 3].map(value => `<option value="${value}" ${state.level === value ? 'selected' : ''}>${value}级分类</option>`).join('')}</select></label></div></div>${table(groupRows(visible, dimensionKey(state)), DETAIL_KEYS)}</section>`;
 }
 
 function ads(rows) {
