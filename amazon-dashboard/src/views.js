@@ -48,11 +48,7 @@ function overview(rows, period) {
 }
 
 function details(rows, state) {
-  const dimensions=[{name:'国家'},{name:'店铺'},...[1,2,3].map(level=>({name:['一级品类','二级品类','三级品类'][level-1],level}))];
-  return `<section class="panel"><div class="panel-heading wrap"><h2>业绩维度分析</h2><div class="segmented detail-dimensions" aria-label="统计维度">${dimensions.map(item=>{
-    const selected=item.level?state.dimension==='品类'&&state.level===item.level:state.dimension===item.name;
-    return `<button type="button" data-dimension="${item.level?'品类':item.name}" ${item.level?`data-category-level="${item.level}"`:''} aria-pressed="${selected}" class="${selected?'selected':''}">${item.name}</button>`;
-  }).join('')}</div></div>${table(groupRows(rows, dimensionKey(state)), DETAIL_KEYS)}</section>`;
+  return `<section class="panel"><div class="panel-heading"><h2>业绩维度分析</h2></div>${table(groupRows(rows, 'country'), DETAIL_KEYS)}</section>`;
 }
 
 function ads(rows) {
