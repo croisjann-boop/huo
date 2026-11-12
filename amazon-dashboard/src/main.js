@@ -43,7 +43,7 @@ function refreshFilters() {
     if(filter[id]!=='all'&&!names.includes(filter[id]))filter[id]='all';
     $(id).replaceChildren(new Option(`全部${['一级','二级','三级'][index]}品类`,'all'),...names.map(name=>new Option(name,name)));
   }
-  for (const key of Object.keys(DEFAULT_FILTERS)) $(key).value = filter[key];
+  for (const key of Object.keys(DEFAULT_FILTERS)) { if($(key))$(key).value = filter[key]; }
   $('country').disabled = filter.role !== 'director';
   $('shop').disabled = filter.role === 'manager';
 }
@@ -85,6 +85,7 @@ function resetFilters() {
   render();
 }
 for (const key of Object.keys(DEFAULT_FILTERS)) {
+  if(!$(key))continue;
   $(key).addEventListener('change', event => {
     if(key==='days'&&event.target.value==='custom'){const period=periodFor(state.filters);state.filters.start=period.start;state.filters.end=period.end;}
     state.filters[key] = event.target.value;
